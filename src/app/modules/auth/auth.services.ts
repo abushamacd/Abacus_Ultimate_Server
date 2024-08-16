@@ -89,7 +89,7 @@ export const accountActivationService = async (token: string) => {
 
   const user = await prisma.user.findFirst({
     where: {
-      email: varifiedUser?.email,
+      phone: varifiedUser?.phone,
     },
   })
 
@@ -101,13 +101,14 @@ export const accountActivationService = async (token: string) => {
   user.activationToken = null
   const result = await prisma.user.update({
     where: {
-      email: user.email,
+      phone: user.phone,
     },
     data: user,
   })
 
   return result
 }
+
 // sign in
 export const signInService = async (
   data: IAuthSignin,
