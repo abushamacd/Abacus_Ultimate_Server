@@ -17,7 +17,7 @@ const sendEmail = async (data: IEmailData): Promise<void> => {
     from: 'squeakit001@gmail.com',
     to: data.to,
     subject: data.subject,
-    text: `Your Company Name`,
+    text: `Inifinity`,
     html: `<!DOCTYPE HTML
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
@@ -276,14 +276,14 @@ const sendEmail = async (data: IEmailData): Promise<void> => {
                                                                     style="line-height: 140%; text-align: left; word-wrap: break-word;">
                                                                     <p style="font-size: 14px; line-height: 140%;"><span
                                                                             style="font-size: 18px; line-height: 25.2px; color: #666666;">Hello,
-                                                                            receiver_name </span></p>
+                                                                            ${data?.receiver} </span></p>
                                                                     <p style="font-size: 14px; line-height: 140%;"> </p>
                                                                     <p style="font-size: 14px; line-height: 140%;"><span
                                                                             style="font-size: 18px; line-height: 25.2px; color: #666666;">We
                                                                             have sent you this
                                                                             email in response to your request to
                                                                             ${data.subject} on
-                                                                            <em><strong>company_name</strong></em>.
+                                                                            <em><strong>Infinity</strong></em>.
                                                                             <em><strong>This link is valid till ${data?.expTime}
                                                                                     form request time</strong></em></span>
                                                                     </p>

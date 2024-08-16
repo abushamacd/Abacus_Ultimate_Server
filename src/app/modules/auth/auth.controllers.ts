@@ -21,7 +21,9 @@ export const signUp = tryCatch(async (req: Request, res: Response) => {
   sendRes<User>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: `Check email: ${req.body.email} to active your account`,
+    message: req.body.email
+      ? `Check email: ${req.body.email} to active your account`
+      : `Sign up successfully`,
     data: result,
   })
 })

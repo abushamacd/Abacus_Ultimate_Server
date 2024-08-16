@@ -1,4 +1,5 @@
 export type IEmailData = {
+  receiver: string
   to: string
   subject: string
   link: string

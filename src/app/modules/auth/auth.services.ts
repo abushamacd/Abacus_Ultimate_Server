@@ -20,7 +20,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
   const { email, phone } = data
   // existency check
   const [userEmail, userPhone] = await Promise.all([
-    isExist(email),
+    email && isExist(email),
     isExist(phone),
   ])
 
@@ -29,7 +29,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
       httpStatus.BAD_REQUEST,
       `${userEmail ? 'Email' : ''}${userEmail && userPhone ? ' & ' : ''}${
         userPhone ? 'Phone number' : ''
-      } already ${userEmail || userPhone ? 'exists' : ''}`
+      } already ${userEmail || userPhone ? 'exists' : ''}`,
     )
   }
 
@@ -39,14 +39,14 @@ export const signUpService = async (data: User): Promise<User | null> => {
   const { password } = data
   const hashedPassword = await bcrypt.hash(
     password,
-    Number(config.bcrypt_solt_round)
+    Number(config.bcrypt_solt_round),
   )
   data.password = hashedPassword
 
   data.activationToken = createToken(
     { email, phone },
     config.jwt.activation_secret as Secret,
-    config.jwt.activation_secret_expires_in as string
+    config.jwt.activation_secret_expires_in as string,
   )
 
   const result = await prisma.user.create({
@@ -56,23 +56,29 @@ export const signUpService = async (data: User): Promise<User | null> => {
   if (!result) {
     throw new Error(`User create failed`)
   }
+
   // send activation link
-  const emailData = {
-    to: data.email,
-    subject: `Account Activation`,
-    link: `${config.client_url}/${data.activationToken}`,
-    button_text: `Activation`,
-    expTime: `1 hours`,
+
+  if (email) {
+    const emailData = {
+      to: email,
+      receiver: data.name,
+      subject: `Account Activation`,
+      link: `${config.client_url}/${data.activationToken}`,
+      button_text: `Activation`,
+      expTime: `1 hours`,
+    }
+    sendEmail(emailData)
   }
-  sendEmail(emailData)
 
   return result
 }
+
 // account activation
 export const accountActivationService = async (token: string) => {
   const varifiedUser = verifyToken(
     token,
-    config.jwt.activation_secret as Secret
+    config.jwt.activation_secret as Secret,
   )
 
   const expire = (varifiedUser?.exp as number) > Date.now()
@@ -104,7 +110,7 @@ export const accountActivationService = async (token: string) => {
 }
 // sign in
 export const signInService = async (
-  data: IAuthSignin
+  data: IAuthSignin,
 ): Promise<IAuthSigninResponse | null> => {
   // existency check
   const user = await isExist(data.email)
@@ -123,14 +129,14 @@ export const signInService = async (
   const accessToken = createToken(
     { id, role, phone, name, email },
     config.jwt.secret as Secret,
-    config.jwt.expires_in as string
+    config.jwt.expires_in as string,
   )
 
   // Create Refresh Token
   const refreshToken = createToken(
     { id, role, phone, name, email },
     config.jwt.refresh_secret as Secret,
-    config.jwt.refresh_expires_in as string
+    config.jwt.refresh_expires_in as string,
   )
 
   return {
@@ -140,7 +146,7 @@ export const signInService = async (
 }
 // refresh token
 export const refreshTokenService = async (
-  token: string
+  token: string,
 ): Promise<IRefreshTokenResponse> => {
   let verifiedToken = null
   try {
@@ -166,7 +172,7 @@ export const refreshTokenService = async (
       email: user.email,
     },
     config.jwt.secret as Secret,
-    config.jwt.expires_in as string
+    config.jwt.expires_in as string,
   )
 
   return {
@@ -176,7 +182,7 @@ export const refreshTokenService = async (
 // change password
 export const changePasswordService = async (
   payload: IChangePassword,
-  user: Partial<User>
+  user: Partial<User>,
 ) => {
   const { oldPassword, newPassword } = payload
   const { email } = user
@@ -196,7 +202,7 @@ export const changePasswordService = async (
   // hass
   const newHashedPassword = await bcrypt.hash(
     newPassword,
-    Number(config.bcrypt_solt_round)
+    Number(config.bcrypt_solt_round),
   )
 
   const updatedData = {
@@ -219,7 +225,7 @@ export const forgetPasswordService = async (email: string) => {
   isUserExist.passwordResetToken = createToken(
     { email },
     config.jwt.reset_password_secret as Secret,
-    config.jwt.reset_password_secret_expires_in as string
+    config.jwt.reset_password_secret_expires_in as string,
   )
 
   await prisma.user.update({
@@ -240,7 +246,7 @@ export const forgetPasswordService = async (email: string) => {
 export const resetPasswordService = async (token: string, password: string) => {
   const varifiedUser = verifyToken(
     token,
-    config.jwt.reset_password_secret as Secret
+    config.jwt.reset_password_secret as Secret,
   )
 
   const expire = (varifiedUser?.exp as number) > Date.now()
