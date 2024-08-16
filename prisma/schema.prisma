@@ -11,18 +11,21 @@ datasource db {
 }
 
 model User {
-  id                     String    @id @default(uuid())
-  name                   String
-  email                  String    @unique
-  role                   role      @default(User)
-  phone                  String    @unique
-  password               String
-  photo                  String?
-  isActive               Boolean   @default(false)
-  activationToken        String?
-  passwordResetToken     String?
-  passwordChangeAt       DateTime?
-  createdAt              DateTime  @default(now())
+  id                 String    @id @default(uuid())
+  name               String
+  email              String?   @unique
+  phone              String
+  password           String
+  role               role      @default(User)
+  address            String?
+  public_id          String?
+  url                String?
+  status             status   @default(green)
+  isActive           Boolean   @default(false)
+  activationToken    String?   @db.LongText
+  passwordResetToken String?   @db.LongText
+  passwordChangeAt   DateTime?
+  createdAt          DateTime  @default(now())
 
   @@map("users")
 }
@@ -31,4 +34,9 @@ enum role {
   User
   Admin
   Super_Admin
+}
+
+enum status {
+  green
+  red
 }
