@@ -1,0 +1,10 @@
+node_modules
+package-lock.json
+.env
+yarn.lock
+*.log
+*audit.json
+.DS_Store
+._*
+migrations
+migration.sql
