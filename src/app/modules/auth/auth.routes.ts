@@ -33,9 +33,15 @@ router.route('/refresh-token').post(reqValidate(refreshTokenZod), refreshToken)
 router
   .route('/change-password')
   .patch(
-    auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+    auth(
+      ENUM_USER_ROLE.CONSUMER,
+      ENUM_USER_ROLE.RETAILER,
+      ENUM_USER_ROLE.STAFF,
+      ENUM_USER_ROLE.MANAGER,
+      ENUM_USER_ROLE.OWNER,
+    ),
     reqValidate(changePasswordZod),
-    changePassword
+    changePassword,
   )
 
 router

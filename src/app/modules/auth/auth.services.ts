@@ -34,7 +34,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
   }
 
   // save new user
-  data.role = 'User'
+  data.role = 'Consumer'
   data.password = '123456'
   if (email) data.isActive = false
 
@@ -188,8 +188,8 @@ export const changePasswordService = async (
   user: Partial<User>,
 ) => {
   const { oldPassword, newPassword } = payload
-  const { email } = user
-  const isUserExist = await isExist(email as string)
+  const { phone } = user
+  const isUserExist = await isExist(phone as string)
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
@@ -213,10 +213,11 @@ export const changePasswordService = async (
   }
 
   await prisma.user.update({
-    where: { email },
+    where: { phone },
     data: updatedData,
   })
 }
+
 // forget password
 export const forgetPasswordService = async (email: string) => {
   const isUserExist = await isExist(email)

@@ -21,7 +21,7 @@ export const auth =
       req.user = verifiedUser
 
       if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden')
+        throw new ApiError(httpStatus.FORBIDDEN, 'You have no permission')
       }
       next()
     } catch (error) {

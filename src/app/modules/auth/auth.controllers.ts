@@ -98,6 +98,7 @@ export const changePassword = tryCatch(async (req, res) => {
     message: 'Password changed successfully !',
   })
 })
+
 // forget password
 export const forgetPassword = tryCatch(async (req, res) => {
   const { email } = req.body

@@ -16,7 +16,7 @@ model User {
   email              String?   @unique
   phone              String    @unique
   password           String
-  role               role      @default(User)
+  role               role      @default(Consumer)
   address            String?
   public_id          String?
   url                String?
@@ -31,9 +31,11 @@ model User {
 }
 
 enum role {
-  User
-  Admin
-  Super_Admin
+  Consumer
+  Retailer
+  Staff
+  Manager
+  Owner
 }
 
 enum status {
