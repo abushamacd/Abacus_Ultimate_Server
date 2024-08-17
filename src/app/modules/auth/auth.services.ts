@@ -275,7 +275,7 @@ export const resetPasswordService = async (token: string, password: string) => {
   user.passwordResetToken = null
   const savedUser = await prisma.user.update({
     where: {
-      email: user.email,
+      phone: user.phone,
     },
     data: user,
   })
