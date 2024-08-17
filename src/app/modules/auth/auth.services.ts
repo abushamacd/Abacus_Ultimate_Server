@@ -116,9 +116,9 @@ export const signInService = async (
   data: IAuthSignin,
 ): Promise<IAuthSigninResponse | null> => {
   // existency check
-  const user = await isExist(data.email)
+  const user = await isExist(data.phone)
   if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Email is incorrect')
+    throw new ApiError(httpStatus.NOT_FOUND, 'Phone is incorrect')
   }
 
   // Password check
@@ -128,16 +128,16 @@ export const signInService = async (
   }
 
   // Create Access Token
-  const { id, role, phone, name, email } = user
+  const { id, role, phone, name } = user
   const accessToken = createToken(
-    { id, role, phone, name, email },
+    { id, role, phone, name },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string,
   )
 
   // Create Refresh Token
   const refreshToken = createToken(
-    { id, role, phone, name, email },
+    { id, role, phone, name },
     config.jwt.refresh_secret as Secret,
     config.jwt.refresh_expires_in as string,
   )

@@ -1,5 +1,5 @@
 export type IAuthSignin = {
-  email: string
+  phone: string
   password: string
 }
 

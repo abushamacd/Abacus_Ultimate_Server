@@ -27,6 +27,7 @@ export const signUp = tryCatch(async (req: Request, res: Response) => {
     data: result,
   })
 })
+
 // account activation
 export const accountActivation = tryCatch(async (req, res) => {
   const { token } = req.params
@@ -38,6 +39,7 @@ export const accountActivation = tryCatch(async (req, res) => {
     data: result,
   })
 })
+
 // sign in
 export const signIn = tryCatch(async (req: Request, res: Response) => {
   const result = await signInService(req.body)
@@ -66,6 +68,7 @@ export const signIn = tryCatch(async (req: Request, res: Response) => {
     })
   }
 })
+
 // refresh token
 export const refreshToken = tryCatch(async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies
@@ -85,6 +88,7 @@ export const refreshToken = tryCatch(async (req: Request, res: Response) => {
     data: result,
   })
 })
+
 // /change password
 export const changePassword = tryCatch(async (req, res) => {
   await changePasswordService(req.body, req.user as Partial<User>)
