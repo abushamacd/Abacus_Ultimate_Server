@@ -35,6 +35,8 @@ export const signUpService = async (data: User): Promise<User | null> => {
 
   // save new user
   data.role = 'User'
+  data.password = '123456'
+  if (email) data.isActive = false
 
   const { password } = data
   const hashedPassword = await bcrypt.hash(
@@ -43,11 +45,12 @@ export const signUpService = async (data: User): Promise<User | null> => {
   )
   data.password = hashedPassword
 
-  data.activationToken = createToken(
-    { email, phone },
-    config.jwt.activation_secret as Secret,
-    config.jwt.activation_secret_expires_in as string,
-  )
+  if (email)
+    data.activationToken = createToken(
+      { email, phone },
+      config.jwt.activation_secret as Secret,
+      config.jwt.activation_secret_expires_in as string,
+    )
 
   const result = await prisma.user.create({
     data,
@@ -58,7 +61,6 @@ export const signUpService = async (data: User): Promise<User | null> => {
   }
 
   // send activation link
-
   if (email) {
     const emailData = {
       to: email,

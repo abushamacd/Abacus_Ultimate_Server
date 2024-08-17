@@ -21,7 +21,7 @@ model User {
   public_id          String?
   url                String?
   status             status    @default(green)
-  isActive           Boolean   @default(false)
+  isActive           Boolean   @default(true)
   activationToken    String?   @db.LongText
   passwordResetToken String?   @db.LongText
   passwordChangeAt   DateTime?
