@@ -239,6 +239,7 @@ export const forgetPasswordService = async (email: string) => {
 
   const emailData = {
     to: email,
+    receiver: isUserExist?.name,
     subject: `Reset Password`,
     link: `${config.client_url}/${isUserExist.passwordResetToken}`,
     button_text: `Reset Password`,
@@ -246,6 +247,7 @@ export const forgetPasswordService = async (email: string) => {
   }
   sendEmail(emailData)
 }
+
 // reset password
 export const resetPasswordService = async (token: string, password: string) => {
   const varifiedUser = verifyToken(
