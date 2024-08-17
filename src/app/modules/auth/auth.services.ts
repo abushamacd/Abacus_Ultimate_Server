@@ -158,9 +158,9 @@ export const refreshTokenService = async (
     throw new ApiError(httpStatus.FORBIDDEN, 'Invalid refresh token')
   }
 
-  const { email } = verifiedToken
+  const { phone } = verifiedToken
   // Existency Check
-  const user = await isExist(email)
+  const user = await isExist(phone)
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist')
   }
@@ -172,7 +172,6 @@ export const refreshTokenService = async (
       role: user.role,
       phone: user.phone,
       name: user.name,
-      email: user.email,
     },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string,
@@ -182,6 +181,7 @@ export const refreshTokenService = async (
     accessToken: newAccessToken,
   }
 }
+
 // change password
 export const changePasswordService = async (
   payload: IChangePassword,
