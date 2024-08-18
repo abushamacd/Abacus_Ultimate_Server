@@ -1,0 +1,7 @@
+don't delete this file. 
+
+Note:
+########################################
+All file temporary upload here for processing. 
+If you delete this file the folder will be empty and the git ignore this empty folder to upload and don't create folder in third party hosting.
+##########################################
