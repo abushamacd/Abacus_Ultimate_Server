@@ -9,6 +9,7 @@ import {
   getUsersService,
   updateUserProfileService,
   updateUserRoleService,
+  updateUserService,
   uploadPhotoService,
 } from './user.services'
 import { pick } from '../../../utilities/pick'
@@ -92,6 +93,17 @@ export const deleteUser = tryCatch(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'User deleted successfully',
+    data: result,
+  })
+})
+
+// update user controller
+export const updateUser = tryCatch(async (req, res) => {
+  const result = await updateUserService(req.params.id, req.body)
+  sendRes<User>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User update successfully',
     data: result,
   })
 })

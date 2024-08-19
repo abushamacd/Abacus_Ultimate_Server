@@ -29,7 +29,7 @@ export const getUserProfileService = async (payload: string) => {
   return result
 }
 
-// update user service
+// update user profile service
 export const updateUserProfileService = async (id: string, payload: User) => {
   const { role, password, ...userData } = payload
   const result = await prisma.user.update({
@@ -209,6 +209,19 @@ export const deleteUserService = async (id: string): Promise<User | null> => {
     where: {
       id,
     },
+  })
+
+  return result
+}
+
+// update user service
+export const updateUserService = async (id: string, payload: User) => {
+  const { role, password, ...userData } = payload
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: userData,
   })
 
   return result
