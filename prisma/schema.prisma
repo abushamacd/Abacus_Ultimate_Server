@@ -24,8 +24,30 @@ model User {
   passwordResetToken String?   @db.LongText
   passwordChangeAt   DateTime?
   createdAt          DateTime  @default(now())
+  vehicleDriver      Vehicle[] @relation("driverRelation")
+  vehicleSupervisor  Vehicle[] @relation("supervisorRelation")
 
   @@map("users")
+}
+
+model Vehicle {
+  id           String  @id @default(uuid())
+  vNumber      String  @unique
+  route        String
+  runningRoute String?
+  income       Int?
+  expense      Int?
+  savings      Int?
+  comment      String?
+
+  driverId     String
+  driver       User   @relation("driverRelation", fields: [driverId], references: [id])
+  supervisorId String
+  supervisor   User   @relation("supervisorRelation", fields: [supervisorId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("vehicles")
 }
 
 enum role {
