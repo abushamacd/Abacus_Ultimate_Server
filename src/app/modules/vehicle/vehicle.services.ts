@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, Vehicle } from '@prisma/client'
 import prisma from '../../../utilities/prisma'
@@ -8,6 +9,7 @@ import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { vehicleSearchableFields } from './vehicle.constants'
+// import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create vehicle service
 export const createVehicleService = async (
@@ -152,6 +154,59 @@ export const updateVehicleService = async (
   if (!result) {
     throw new Error('Vehicle update failed')
   }
+
+  return result
+}
+
+// delete vehicle service
+export const deleteVehicleService = async (
+  id: string,
+): Promise<Vehicle | null> => {
+  const isExist = await prisma.vehicle.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      // @ts-ignore
+      tasks: {
+        orderBy: {
+          position: 'asc',
+        },
+      },
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Vehicle not found')
+  }
+
+  const result = await prisma.vehicle.delete({
+    where: {
+      id,
+    },
+  })
+
+  // await prisma.$transaction(async transactionClient => {
+  //   await asyncForEach(isExist?.sections, async (section: Vehicle) => {
+  //     await transactionClient.task.deleteMany({
+  //       where: {
+  //         sectionId: section?.id,
+  //       },
+  //     })
+  //   })
+
+  //   await transactionClient.section.deleteMany({
+  //     where: {
+  //       vehicleId: id,
+  //     },
+  //   })
+
+  //   await transactionClient.vehicle.delete({
+  //     where: {
+  //       id,
+  //     },
+  //   })
+  // })
 
   return result
 }

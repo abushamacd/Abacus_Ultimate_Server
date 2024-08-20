@@ -5,6 +5,7 @@ import { ENUM_USER_ROLE } from '../../../enums/user'
 import { createVehicleZod } from './vehicle.validations'
 import {
   createVehicle,
+  deleteVehicle,
   getVehicle,
   getVehicles,
   updateVehicle,
@@ -26,5 +27,6 @@ router
   .route('/:id')
   .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getVehicle)
   .patch(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), updateVehicle)
+  .delete(auth(ENUM_USER_ROLE.OWNER), deleteVehicle)
 
 export default router

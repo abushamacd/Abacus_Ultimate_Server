@@ -48,6 +48,7 @@ router
   .route('/:id')
   .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), get${capitalizeLetter(name)})
   .patch(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), update${capitalizeLetter(name)})
+    .delete(auth(ENUM_USER_ROLE.OWNER), delete${capitalizeLetter(name)})
 
 export default router
 `
@@ -79,7 +80,7 @@ import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { ${capitalizeLetter(name)} } from '@prisma/client'
-import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService,   update${capitalizeLetter(name)}Service } from './${name}.services'
+import {create${capitalizeLetter(name)}Service,  delete${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService,   update${capitalizeLetter(name)}Service } from './${name}.services'
 import { ${name}FilterableFields } from './${name}.constants'
 import { paginationFields } from '../../../constants/pagination'
 import { pick } from '../../../utilities/pick'
@@ -100,7 +101,7 @@ export const create${capitalizeLetter(
 
 
 // get ${name}s controller
-export const get${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
+export const get${capitalizeLetter(name)}s = tryCatch(async (req: Request, res: Response) => {
   const filters = pick(req.query, ${name}FilterableFields)
   const options = pick(req.query, paginationFields)
   const result = await get${capitalizeLetter(name)}sService(filters, options)
@@ -114,7 +115,7 @@ export const get${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
 })
 
 // get ${name} controller
-export const get${capitalizeLetter(name)} = tryCatch(async (req, res) => {
+export const get${capitalizeLetter(name)} = tryCatch(async (req: Request, res: Response) => {
   const result = await get${capitalizeLetter(name)}Service(req?.params?.id)
   sendRes<${capitalizeLetter(name)}>(res, {
     statusCode: httpStatus.OK,
@@ -136,6 +137,18 @@ export const update${capitalizeLetter(name)} = tryCatch(async (req: Request, res
   })
 })
 
+// delete ${name}
+export const delete${capitalizeLetter(name)} = tryCatch(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const result = await delete${capitalizeLetter(name)}Service(id)
+  sendRes<${capitalizeLetter(name)} | null>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: '${capitalizeLetter(name)} deleted successfully',
+    data: result,
+  })
+})
+
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.controllers.ts`),
@@ -143,6 +156,8 @@ fs.writeFileSync(
 )
 
 const serviceTemplate = `
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, ${capitalizeLetter(name)} } from '@prisma/client'
 import prisma from '../../../utilities/prisma'
 import httpStatus from 'http-status'
@@ -152,6 +167,7 @@ import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { ${name}SearchableFields } from './${name}.constants'
+// import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create ${name} service
 export const create${capitalizeLetter(name)}Service = async (
@@ -295,6 +311,59 @@ export const update${capitalizeLetter(name)}Service = async (
   if (!result) {
     throw new Error('${capitalizeLetter(name)} update failed')
   }
+
+  return result
+}
+
+// delete ${name} service
+export const delete${capitalizeLetter(name)}Service = async (
+  id: string,
+): Promise<${capitalizeLetter(name)} | null> => {
+  const isExist = await prisma.${name}.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      // @ts-ignore
+      tasks: {
+        orderBy: {
+          position: 'asc',
+        },
+      },
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, '${capitalizeLetter(name)} not found')
+  }
+
+  const result = await prisma.${name}.delete({
+    where: {
+      id,
+    },
+  })
+
+  // await prisma.$transaction(async transactionClient => {
+  //   await asyncForEach(isExist?.sections, async (section: ${capitalizeLetter(name)}) => {
+  //     await transactionClient.task.deleteMany({
+  //       where: {
+  //         sectionId: section?.id,
+  //       },
+  //     })
+  //   })
+
+  //   await transactionClient.section.deleteMany({
+  //     where: {
+  //       ${name}Id: id,
+  //     },
+  //   })
+
+  //   await transactionClient.${name}.delete({
+  //     where: {
+  //       id,
+  //     },
+  //   })
+  // })
 
   return result
 }

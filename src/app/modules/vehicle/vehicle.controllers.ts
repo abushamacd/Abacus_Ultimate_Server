@@ -5,6 +5,7 @@ import httpStatus from 'http-status'
 import { Vehicle } from '@prisma/client'
 import {
   createVehicleService,
+  deleteVehicleService,
   getVehicleService,
   getVehiclesService,
   updateVehicleService,
@@ -25,7 +26,7 @@ export const createVehicle = tryCatch(async (req: Request, res: Response) => {
 })
 
 // get vehicles controller
-export const getVehicles = tryCatch(async (req, res) => {
+export const getVehicles = tryCatch(async (req: Request, res: Response) => {
   const filters = pick(req.query, vehicleFilterableFields)
   const options = pick(req.query, paginationFields)
   const result = await getVehiclesService(filters, options)
@@ -39,7 +40,7 @@ export const getVehicles = tryCatch(async (req, res) => {
 })
 
 // get vehicle controller
-export const getVehicle = tryCatch(async (req, res) => {
+export const getVehicle = tryCatch(async (req: Request, res: Response) => {
   const result = await getVehicleService(req?.params?.id)
   sendRes<Vehicle>(res, {
     statusCode: httpStatus.OK,
@@ -57,6 +58,18 @@ export const updateVehicle = tryCatch(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Vehicle updated successfully',
+    data: result,
+  })
+})
+
+// delete vehicle
+export const deleteVehicle = tryCatch(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const result = await deleteVehicleService(id)
+  sendRes<Vehicle | null>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Vehicle deleted successfully',
     data: result,
   })
 })
