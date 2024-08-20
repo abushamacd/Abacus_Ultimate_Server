@@ -11,6 +11,8 @@
     "build": "tsc",
     "pm": "npx prisma migrate dev --name init",
     "ps": "npx prisma studio",
+    "pp": "prisma db pull",
+    "pg": "prisma generate",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "lint:check": "eslint --ignore-path .eslintignore --ext .js,.ts .",
     "lint:fix": "eslint . --fix",

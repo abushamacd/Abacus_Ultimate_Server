@@ -34,11 +34,11 @@ import { create${capitalizeLetter(name)} } from './${name}.controllers'
 
 const router = express.Router()
 
-// example route
+// example ${name} route
 router
-  .route('/create')
+  .route('/')
   .post(
-    auth(ENUM_USER_ROLE.USER),
+    auth(ENUM_USER_ROLE.OWNER,),
     reqValidate(create${capitalizeLetter(name)}Zod),
     create${capitalizeLetter(name)}
   )
@@ -47,7 +47,7 @@ export default router
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.routes.ts`),
-  routesTemplate
+  routesTemplate,
 )
 
 const validationTemplate = `
@@ -57,14 +57,14 @@ import { z } from 'zod'
 export const create${capitalizeLetter(name)}Zod = z.object({
   body: z.object({
     key: z.string({
-      required_error: 'Z: Key name is required',
+      required_error: 'Key name is required',
     }),
   }),
 })
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.validations.ts`),
-  validationTemplate
+  validationTemplate,
 )
 
 const controllerTemplate = `
@@ -72,15 +72,15 @@ import { Request, Response } from 'express'
 import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
-import { User } from '@prisma/client'
+import { ${capitalizeLetter(name)} } from '@prisma/client'
 import {create${capitalizeLetter(name)}Service} from './${name}.services'
 
 // create ${name} controller
 export const create${capitalizeLetter(
-  name
+  name,
 )} = tryCatch(async (req: Request, res: Response) => {
   const result = await create${capitalizeLetter(name)}Service(req.body)
-  sendRes<User>(res, {
+  sendRes<${capitalizeLetter(name)}>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Create ${name} successfully',
@@ -91,49 +91,66 @@ export const create${capitalizeLetter(
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.controllers.ts`),
-  controllerTemplate
+  controllerTemplate,
 )
 
 const serviceTemplate = `
-import { User } from '@prisma/client'
+import { ${capitalizeLetter(name)} } from '@prisma/client'
 import prisma from '../../../utilities/prisma'
-import bcrypt from 'bcrypt'
-import config from '../../../config'
 import httpStatus from 'http-status'
 import { ApiError } from './../../../errorFormating/apiError'
 
 // create ${name} service
-export const create${capitalizeLetter(
-  name
-)}Service = async (data: User): Promise<User | null> => {
+export const create${capitalizeLetter(name)}Service = async (
+  data: ${capitalizeLetter(name)},
+): Promise<${capitalizeLetter(name)} | null> => {
+  const ${name} = await prisma.${name}.findFirst({
+    where: {
+      filed_name: data?.filed_name,
+    },
+  })
+
+  if (${name}) {
+    throw new ApiError(httpStatus.NOT_FOUND, "${name} is already exist")
+  }
+
+  const result = await prisma.${name}.create({
+    data,
+  })
+
+  if (!result) {
+    throw new Error("User create failed")
+  }
+
   return result
 }
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.services.ts`),
-  serviceTemplate
+  serviceTemplate,
 )
 
 const interfacesTemplate = `
-// Example interfaces
+// ${name} interfaces
 export type I${capitalizeLetter(name)} = {
-  oldPassword: string
-  newPassword: string
+  field_name: string
 }
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.interfaces.ts`),
-  interfacesTemplate
+  interfacesTemplate,
 )
 
 const constantsTemplate = `
-export const ${name} = ['']
+export const ${name}FilterableFields: string[] = ['searchTerm', 'role']
+export const ${name}SearchableFields: string[] = ['name', 'phone']
+
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.constants.ts`),
-  constantsTemplate
+  constantsTemplate,
 )
 
 console.log(
-  `Folder '${name}' and files created successfully in 'src/app/modules'.`
+  `Folder '${name}' and files created successfully in 'src/app/modules'.`,
 )

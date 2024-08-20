@@ -8,6 +8,9 @@ export const signUpZod = z.object({
     phone: z.string({
       required_error: 'Phone number is required',
     }),
+    address: z.string({
+      required_error: 'Address is required',
+    }),
   }),
 })
 

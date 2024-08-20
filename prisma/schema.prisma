@@ -15,7 +15,7 @@ model User {
   phone              String    @unique
   password           String
   role               role      @default(Consumer)
-  address            String?
+  address            String
   public_id          String?
   url                String?
   status             status    @default(green)
