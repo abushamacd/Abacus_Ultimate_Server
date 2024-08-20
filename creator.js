@@ -30,7 +30,7 @@ import reqValidate from '../../../middleware/reqValidate'
 import { auth } from '../../../middleware/auth'
 import { ENUM_USER_ROLE } from '../../../enums/user'
 import { create${capitalizeLetter(name)}Zod } from './${name}.validations'
-import { create${capitalizeLetter(name)}, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}s } from './${name}.controllers'
+import { create${capitalizeLetter(name)}, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}s, update${capitalizeLetter(name)} } from './${name}.controllers'
 
 const router = express.Router()
 
@@ -47,6 +47,7 @@ router
 router
   .route('/:id')
   .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), get${capitalizeLetter(name)})
+  .patch(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), update${capitalizeLetter(name)})
 
 export default router
 `
@@ -78,7 +79,7 @@ import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { ${capitalizeLetter(name)} } from '@prisma/client'
-import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService} from './${name}.services'
+import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService,   update${capitalizeLetter(name)}Service } from './${name}.services'
 import { ${name}FilterableFields } from './${name}.constants'
 import { paginationFields } from '../../../constants/pagination'
 import { pick } from '../../../utilities/pick'
@@ -107,18 +108,30 @@ export const get${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: '${capitalizeLetter(name)}s retrived successfully',
-    meta: result.meta,
-    data: result.data,
+    meta: result?.meta,
+    data: result?.data,
   })
 })
 
-// get ${name}s controller
+// get ${name} controller
 export const get${capitalizeLetter(name)} = tryCatch(async (req, res) => {
   const result = await get${capitalizeLetter(name)}Service(req?.params?.id)
   sendRes<${capitalizeLetter(name)}>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: '${capitalizeLetter(name)} retrived successfully',
+    data: result,
+  })
+})
+
+// update ${name} controller
+export const update${capitalizeLetter(name)} = tryCatch(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const result = await update${capitalizeLetter(name)}Service(id, req?.body)
+  sendRes<${capitalizeLetter(name)}>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: '${capitalizeLetter(name)} updated successfully',
     data: result,
   })
 })
@@ -169,7 +182,7 @@ export const create${capitalizeLetter(name)}Service = async (
 export const get${capitalizeLetter(name)}sService = async (
   filters: I${capitalizeLetter(name)}FilterRequest,
   options: IPaginationOptions,
-): Promise<IGenericResponse<${capitalizeLetter(name)}[]>> => {
+): Promise<IGenericResponse<${capitalizeLetter(name)}[]> | null> => {
   const { limit, page, skip } = calculatePagination(options)
   const { searchTerm, ...filterData } = filters
 
@@ -235,7 +248,7 @@ export const get${capitalizeLetter(name)}sService = async (
 
 
 // get ${name} service
-export const get${capitalizeLetter(name)}Service = async (id: string) => {
+export const get${capitalizeLetter(name)}Service = async (id: string): Promise<${capitalizeLetter(name)} | null>  => {
   const result = await prisma.${name}.findUnique({
     where: {
       id,
@@ -253,7 +266,39 @@ export const get${capitalizeLetter(name)}Service = async (id: string) => {
   return result
 }
 
-  
+// update ${name} service
+export const update${capitalizeLetter(name)}Service = async (
+  id: string,
+  payload: Partial<${capitalizeLetter(name)}>,
+): Promise<${capitalizeLetter(name)} | null> => {
+  const isExist = await prisma.${name}.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, '${capitalizeLetter(name)} not found')
+  }
+
+  const result = await prisma.${name}.update({
+    where: {
+      id,
+    },
+    data: payload,
+    include: {
+      driver: true,
+      supervisor: true,
+    },
+  })
+
+  if (!result) {
+    throw new Error('${capitalizeLetter(name)} update failed')
+  }
+
+  return result
+}
+
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.services.ts`),

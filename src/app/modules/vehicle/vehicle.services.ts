@@ -38,7 +38,7 @@ export const createVehicleService = async (
 export const getVehiclesService = async (
   filters: IVehicleFilterRequest,
   options: IPaginationOptions,
-): Promise<IGenericResponse<Vehicle[]>> => {
+): Promise<IGenericResponse<Vehicle[]> | null> => {
   const { limit, page, skip } = calculatePagination(options)
   const { searchTerm, ...filterData } = filters
 
@@ -103,7 +103,9 @@ export const getVehiclesService = async (
 }
 
 // get vehicle service
-export const getVehicleService = async (id: string) => {
+export const getVehicleService = async (
+  id: string,
+): Promise<Vehicle | null> => {
   const result = await prisma.vehicle.findUnique({
     where: {
       id,
@@ -116,6 +118,39 @@ export const getVehicleService = async (id: string) => {
 
   if (!result) {
     throw new Error('Vehicle retrived failed')
+  }
+
+  return result
+}
+
+// update vehicle service
+export const updateVehicleService = async (
+  id: string,
+  payload: Partial<Vehicle>,
+): Promise<Vehicle | null> => {
+  const isExist = await prisma.vehicle.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Vehicle not found')
+  }
+
+  const result = await prisma.vehicle.update({
+    where: {
+      id,
+    },
+    data: payload,
+    include: {
+      driver: true,
+      supervisor: true,
+    },
+  })
+
+  if (!result) {
+    throw new Error('Vehicle update failed')
   }
 
   return result
