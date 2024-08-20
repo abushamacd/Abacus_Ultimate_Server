@@ -20,7 +20,7 @@ export const createVehicleService = async (
   })
 
   if (vehicle) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'vehicle is already exist')
+    throw new ApiError(httpStatus.NOT_FOUND, 'Vehicle is already exist')
   }
 
   const result = await prisma.vehicle.create({
@@ -28,7 +28,7 @@ export const createVehicleService = async (
   })
 
   if (!result) {
-    throw new Error('User create failed')
+    throw new Error('Vehicle create failed')
   }
 
   return result
@@ -84,6 +84,10 @@ export const getVehiclesService = async (
     },
   })
 
+  if (!result) {
+    throw new Error('Vehicle retrived failed')
+  }
+
   const total = await prisma.vehicle.count({
     where: whereConditions,
   })
@@ -96,4 +100,23 @@ export const getVehiclesService = async (
     },
     data: result,
   }
+}
+
+// get vehicle service
+export const getVehicleService = async (id: string) => {
+  const result = await prisma.vehicle.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      driver: true,
+      supervisor: true,
+    },
+  })
+
+  if (!result) {
+    throw new Error('Vehicle retrived failed')
+  }
+
+  return result
 }

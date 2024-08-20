@@ -3,7 +3,7 @@ import reqValidate from '../../../middleware/reqValidate'
 import { auth } from '../../../middleware/auth'
 import { ENUM_USER_ROLE } from '../../../enums/user'
 import { createVehicleZod } from './vehicle.validations'
-import { createVehicle, createVehicles } from './vehicle.controllers'
+import { createVehicle, getVehicle, getVehicles } from './vehicle.controllers'
 
 const router = express.Router()
 
@@ -15,6 +15,10 @@ router
     reqValidate(createVehicleZod),
     createVehicle,
   )
-  .get(auth(ENUM_USER_ROLE.OWNER), createVehicles)
+  .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getVehicles)
+
+router
+  .route('/:id')
+  .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getVehicle)
 
 export default router

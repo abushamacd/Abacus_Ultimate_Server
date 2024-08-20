@@ -30,7 +30,7 @@ import reqValidate from '../../../middleware/reqValidate'
 import { auth } from '../../../middleware/auth'
 import { ENUM_USER_ROLE } from '../../../enums/user'
 import { create${capitalizeLetter(name)}Zod } from './${name}.validations'
-import { create${capitalizeLetter(name)} } from './${name}.controllers'
+import { create${capitalizeLetter(name)}, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}s } from './${name}.controllers'
 
 const router = express.Router()
 
@@ -42,7 +42,11 @@ router
     reqValidate(create${capitalizeLetter(name)}Zod),
     create${capitalizeLetter(name)}
   )
-.get(auth(ENUM_USER_ROLE.OWNER), create${capitalizeLetter(name)}s)
+  .get(auth(ENUM_USER_ROLE.OWNER), get${capitalizeLetter(name)}s)
+
+router
+  .route('/:id')
+  .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), get${capitalizeLetter(name)})
 
 export default router
 `
@@ -74,7 +78,7 @@ import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { ${capitalizeLetter(name)} } from '@prisma/client'
-import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}sService} from './${name}.services'
+import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService} from './${name}.services'
 import { ${name}FilterableFields } from './${name}.constants'
 import { paginationFields } from '../../../constants/pagination'
 import { pick } from '../../../utilities/pick'
@@ -95,7 +99,7 @@ export const create${capitalizeLetter(
 
 
 // get ${name}s controller
-export const create${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
+export const get${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
   const filters = pick(req.query, ${name}FilterableFields)
   const options = pick(req.query, paginationFields)
   const result = await get${capitalizeLetter(name)}sService(filters, options)
@@ -105,6 +109,17 @@ export const create${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
     message: '${capitalizeLetter(name)}s retrived successfully',
     meta: result.meta,
     data: result.data,
+  })
+})
+
+// get ${name}s controller
+export const get${capitalizeLetter(name)} = tryCatch(async (req, res) => {
+  const result = await get${capitalizeLetter(name)}Service(req?.params?.id)
+  sendRes<${capitalizeLetter(name)}>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: '${capitalizeLetter(name)} retrived successfully',
+    data: result,
   })
 })
 
@@ -136,7 +151,7 @@ export const create${capitalizeLetter(name)}Service = async (
   })
 
   if (${name}) {
-    throw new ApiError(httpStatus.NOT_FOUND, "${name} is already exist")
+    throw new ApiError(httpStatus.NOT_FOUND, "${capitalizeLetter(name)} is already exist")
   }
 
   const result = await prisma.${name}.create({
@@ -144,17 +159,17 @@ export const create${capitalizeLetter(name)}Service = async (
   })
 
   if (!result) {
-    throw new Error("User create failed")
+    throw new Error("${capitalizeLetter(name)} create failed")
   }
 
   return result
 }
 
 // get ${name}s service
-export const get${name}sService = async (
-  filters: I${name}FilterRequest,
+export const get${capitalizeLetter(name)}sService = async (
+  filters: I${capitalizeLetter(name)}FilterRequest,
   options: IPaginationOptions,
-): Promise<IGenericResponse<${name}[]>> => {
+): Promise<IGenericResponse<${capitalizeLetter(name)}[]>> => {
   const { limit, page, skip } = calculatePagination(options)
   const { searchTerm, ...filterData } = filters
 
@@ -181,7 +196,7 @@ export const get${name}sService = async (
     })
   }
 
-  const whereConditions: Prisma.${name}WhereInput =
+  const whereConditions: Prisma.${capitalizeLetter(name)}WhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {}
 
   const result = await prisma.${name}.findMany({
@@ -195,9 +210,15 @@ export const get${name}sService = async (
             createdAt: 'asc',
           },
     include: {
-      field_name: true
+      driver: true,
+      supervisor: true,
     },
   })
+
+  if (!result) {
+    throw new Error('${capitalizeLetter(name)} retrived failed')
+  }
+
   const total = await prisma.${name}.count({
     where: whereConditions,
   })
@@ -211,6 +232,27 @@ export const get${name}sService = async (
     data: result,
   }
 }
+
+
+// get ${name} service
+export const get${capitalizeLetter(name)}Service = async (id: string) => {
+  const result = await prisma.${name}.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      driver: true,
+      supervisor: true,
+    },
+  })
+
+  if (!result) {
+    throw new Error('${capitalizeLetter(name)} retrived failed')
+  }
+
+  return result
+}
+
   
 `
 fs.writeFileSync(
