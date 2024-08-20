@@ -42,6 +42,7 @@ router
     reqValidate(create${capitalizeLetter(name)}Zod),
     create${capitalizeLetter(name)}
   )
+.get(auth(ENUM_USER_ROLE.OWNER), create${capitalizeLetter(name)}s)
 
 export default router
 `
@@ -73,7 +74,10 @@ import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { ${capitalizeLetter(name)} } from '@prisma/client'
-import {create${capitalizeLetter(name)}Service} from './${name}.services'
+import {create${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}sService} from './${name}.services'
+import { ${name}FilterableFields } from './${name}.constants'
+import { paginationFields } from '../../../constants/pagination'
+import { pick } from '../../../utilities/pick'
 
 // create ${name} controller
 export const create${capitalizeLetter(
@@ -88,6 +92,22 @@ export const create${capitalizeLetter(
   })
 })
 
+
+
+// get ${name}s controller
+export const create${capitalizeLetter(name)}s = tryCatch(async (req, res) => {
+  const filters = pick(req.query, ${name}FilterableFields)
+  const options = pick(req.query, paginationFields)
+  const result = await get${capitalizeLetter(name)}sService(filters, options)
+  sendRes<${capitalizeLetter(name)}[]>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: '${capitalizeLetter(name)}s retrived successfully',
+    meta: result.meta,
+    data: result.data,
+  })
+})
+
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.controllers.ts`),
@@ -95,10 +115,15 @@ fs.writeFileSync(
 )
 
 const serviceTemplate = `
-import { ${capitalizeLetter(name)} } from '@prisma/client'
+import { Prisma, ${capitalizeLetter(name)} } from '@prisma/client'
 import prisma from '../../../utilities/prisma'
 import httpStatus from 'http-status'
 import { ApiError } from './../../../errorFormating/apiError'
+import { I${capitalizeLetter(name)}FilterRequest } from './${name}.interfaces'
+import { IPaginationOptions } from '../../../interface/pagination'
+import { IGenericResponse } from '../../../interface/common'
+import { calculatePagination } from '../../../helpers/paginationHelper'
+import { ${name}SearchableFields } from './${name}.constants'
 
 // create ${name} service
 export const create${capitalizeLetter(name)}Service = async (
@@ -124,6 +149,69 @@ export const create${capitalizeLetter(name)}Service = async (
 
   return result
 }
+
+// get ${name}s service
+export const get${name}sService = async (
+  filters: I${name}FilterRequest,
+  options: IPaginationOptions,
+): Promise<IGenericResponse<${name}[]>> => {
+  const { limit, page, skip } = calculatePagination(options)
+  const { searchTerm, ...filterData } = filters
+
+  const andConditions = []
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: ${name}SearchableFields.map(field => ({
+        [field]: {
+          contains: searchTerm,
+          // mode: 'insensitive',
+        },
+      })),
+    })
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map(key => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    })
+  }
+
+  const whereConditions: Prisma.${name}WhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {}
+
+  const result = await prisma.${name}.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? { [options.sortBy]: options.sortOrder }
+        : {
+            createdAt: 'asc',
+          },
+    include: {
+      field_name: true
+    },
+  })
+  const total = await prisma.${name}.count({
+    where: whereConditions,
+  })
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  }
+}
+  
 `
 fs.writeFileSync(
   path.join(targetDirectory, `${name}.services.ts`),
@@ -134,6 +222,10 @@ const interfacesTemplate = `
 // ${name} interfaces
 export type I${capitalizeLetter(name)} = {
   field_name: string
+}
+
+export type I${capitalizeLetter(name)}FilterRequest = {
+  searchTerm?: string | undefined
 }
 `
 fs.writeFileSync(
