@@ -1,0 +1,85 @@
+import { Request, Response } from 'express'
+import { tryCatch } from '../../../utilities/tryCatch'
+import { sendRes } from '../../../utilities/sendRes'
+import httpStatus from 'http-status'
+import { VehicleStatement } from '@prisma/client'
+import {
+  createVehicleStatementService,
+  deleteVehicleStatementService,
+  getVehicleStatementService,
+  getVehicleStatementsService,
+  updateVehicleStatementService,
+} from './vehicleStatement.services'
+import { vehicleStatementFilterableFields } from './vehicleStatement.constants'
+import { paginationFields } from '../../../constants/pagination'
+import { pick } from '../../../utilities/pick'
+
+// create vehicleStatement controller
+export const createVehicleStatement = tryCatch(
+  async (req: Request, res: Response) => {
+    const result = await createVehicleStatementService(req.body)
+    sendRes<VehicleStatement>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Create statement successfully',
+      data: result,
+    })
+  },
+)
+
+// get vehicleStatements controller
+export const getVehicleStatements = tryCatch(
+  async (req: Request, res: Response) => {
+    const filters = pick(req.query, vehicleStatementFilterableFields)
+    const options = pick(req.query, paginationFields)
+    const result = await getVehicleStatementsService(filters, options)
+    sendRes<VehicleStatement[]>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'VehicleStatements retrived successfully',
+      meta: result?.meta,
+      data: result?.data,
+    })
+  },
+)
+
+// get vehicleStatement controller
+export const getVehicleStatement = tryCatch(
+  async (req: Request, res: Response) => {
+    const result = await getVehicleStatementService(req?.params?.id)
+    sendRes<VehicleStatement>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'VehicleStatement retrived successfully',
+      data: result,
+    })
+  },
+)
+
+// update vehicleStatement controller
+export const updateVehicleStatement = tryCatch(
+  async (req: Request, res: Response) => {
+    const { id } = req.params
+    const result = await updateVehicleStatementService(id, req?.body)
+    sendRes<VehicleStatement>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'VehicleStatement updated successfully',
+      data: result,
+    })
+  },
+)
+
+// delete vehicleStatement
+export const deleteVehicleStatement = tryCatch(
+  async (req: Request, res: Response) => {
+    const { id } = req.params
+    const result = await deleteVehicleStatementService(id)
+    sendRes<VehicleStatement | null>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'VehicleStatement deleted successfully',
+      data: result,
+    })
+  },
+)

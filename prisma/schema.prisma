@@ -35,9 +35,12 @@ model Vehicle {
   vNumber      String  @unique
   route        String
   runningRoute String?
-  income       Int?
-  expense      Int?
-  savings      Int?
+  oil          Int     @default(0)
+  income       Int     @default(0)
+  expense      Int     @default(0)
+  savings      Int     @default(0)
+  welfare      Int     @default(0)
+  servicing    Int     @default(0)
   comment      String?
 
   driverId     String

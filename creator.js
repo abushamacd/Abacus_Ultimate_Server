@@ -30,7 +30,7 @@ import reqValidate from '../../../middleware/reqValidate'
 import { auth } from '../../../middleware/auth'
 import { ENUM_USER_ROLE } from '../../../enums/user'
 import { create${capitalizeLetter(name)}Zod } from './${name}.validations'
-import { create${capitalizeLetter(name)}, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}s, update${capitalizeLetter(name)} } from './${name}.controllers'
+import { create${capitalizeLetter(name)}, delete${capitalizeLetter(name)}, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}s, update${capitalizeLetter(name)} } from './${name}.controllers'
 
 const router = express.Router()
 
@@ -80,7 +80,7 @@ import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { ${capitalizeLetter(name)} } from '@prisma/client'
-import {create${capitalizeLetter(name)}Service,  delete${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}, get${capitalizeLetter(name)}sService,   update${capitalizeLetter(name)}Service } from './${name}.services'
+import {create${capitalizeLetter(name)}Service,  delete${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}Service, get${capitalizeLetter(name)}sService,   update${capitalizeLetter(name)}Service } from './${name}.services'
 import { ${name}FilterableFields } from './${name}.constants'
 import { paginationFields } from '../../../constants/pagination'
 import { pick } from '../../../utilities/pick'
