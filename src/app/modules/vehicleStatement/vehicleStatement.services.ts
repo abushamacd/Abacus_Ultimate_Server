@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, VehicleStatement } from '@prisma/client'
@@ -130,7 +132,7 @@ export const getVehicleStatementService = async (
   return result
 }
 
-// update vehicleStatement service
+// update vehicle statement service
 export const updateVehicleStatementService = async (
   id: string,
   payload: Partial<VehicleStatement>,
@@ -141,19 +143,52 @@ export const updateVehicleStatementService = async (
     },
   })
 
-  if (!isExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'VehicleStatement not found')
+  const vehicle = await prisma.vehicle.findFirst({
+    where: {
+      id: isExist?.vehicleId,
+    },
+  })
+
+  if (!vehicle || !isExist) {
+    throw new ApiError(
+      !vehicle ? httpStatus.NOT_FOUND : httpStatus.BAD_REQUEST,
+      !vehicle ? 'Vehicle not found' : 'Vehicle statement not found',
+    )
   }
 
-  const result = await prisma.vehicleStatement.update({
-    where: {
-      id,
-    },
-    data: payload,
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+  //
+  const { vehicleId, ...vData } = payload
+
+  const result = await prisma.$transaction(async transactionClient => {
+    // minus previous figure
+    if (vData?.oil) vehicle.oil -= isExist?.oil
+    if (vData?.income) vehicle.income -= isExist?.income
+    if (vData?.expense) vehicle.expense -= isExist?.expense
+    if (vData?.welfare) vehicle.welfare -= isExist?.welfare
+    if (vData?.servicing) vehicle.servicing -= isExist?.servicing
+
+    // add new figure
+    if (vData?.oil) vehicle.oil += vData?.oil
+    if (vData?.income) vehicle.income += vData?.income
+    if (vData?.expense) vehicle.expense += vData?.expense
+    if (vData?.welfare) vehicle.welfare += vData?.welfare
+    if (vData?.servicing) vehicle.servicing += vData?.servicing
+
+    await transactionClient.vehicle.update({
+      where: {
+        id: isExist?.vehicleId,
+      },
+      data: vehicle,
+    })
+
+    const vStatement = await prisma.vehicleStatement.update({
+      where: {
+        id,
+      },
+      data: vData,
+    })
+
+    return vStatement
   })
 
   if (!result) {

@@ -56,7 +56,7 @@ export const getVehicleStatement = tryCatch(
   },
 )
 
-// update vehicleStatement controller
+// update vehicle statement controller
 export const updateVehicleStatement = tryCatch(
   async (req: Request, res: Response) => {
     const { id } = req.params
@@ -64,7 +64,7 @@ export const updateVehicleStatement = tryCatch(
     sendRes<VehicleStatement>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'VehicleStatement updated successfully',
+      message: 'Vehicle statement updated successfully',
       data: result,
     })
   },
