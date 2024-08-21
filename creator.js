@@ -323,14 +323,14 @@ export const delete${capitalizeLetter(name)}Service = async (
     where: {
       id,
     },
-    include: {
-      // @ts-ignore
-      tasks: {
-        orderBy: {
-          position: 'asc',
-        },
-      },
-    },
+    // include: {
+    //   // @ts-ignore
+    //   tasks: {
+    //     orderBy: {
+    //       position: 'asc',
+    //     },
+    //   },
+    // },
   })
 
   if (!isExist) {

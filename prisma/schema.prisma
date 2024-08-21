@@ -45,9 +45,30 @@ model Vehicle {
   supervisorId String
   supervisor   User   @relation("supervisorRelation", fields: [supervisorId], references: [id])
 
+  vehicleStatements VehicleStatement[]
+
   createdAt DateTime @default(now())
 
   @@map("vehicles")
+}
+
+model VehicleStatement {
+  id        String  @id @default(uuid())
+  date      String
+  route     String
+  oil       Int
+  income    Int
+  expense   Int
+  welfare   Int     @default(0)
+  servicing Int     @default(0)
+  comment   String?
+
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("vehicleStatements")
 }
 
 enum role {
