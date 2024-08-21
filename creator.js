@@ -236,7 +236,7 @@ export const get${capitalizeLetter(name)}sService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'asc',
+            createdAt: 'desc',
           },
     include: {
       driver: true,
