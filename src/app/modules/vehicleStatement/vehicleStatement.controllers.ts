@@ -21,7 +21,7 @@ export const createVehicleStatement = tryCatch(
     sendRes<VehicleStatement>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Create statement successfully',
+      message: 'Create vehicle statement successfully',
       data: result,
     })
   },
