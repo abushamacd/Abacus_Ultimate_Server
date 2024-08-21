@@ -43,14 +43,14 @@ export const getVehicleStatements = tryCatch(
   },
 )
 
-// get vehicleStatement controller
+// get vehicle statement controller
 export const getVehicleStatement = tryCatch(
   async (req: Request, res: Response) => {
     const result = await getVehicleStatementService(req?.params?.id)
     sendRes<VehicleStatement>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'VehicleStatement retrived successfully',
+      message: 'Vehicle statement retrived successfully',
       data: result,
     })
   },

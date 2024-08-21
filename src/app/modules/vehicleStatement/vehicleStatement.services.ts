@@ -113,7 +113,7 @@ export const getVehicleStatementsService = async (
   }
 }
 
-// get vehicleStatement service
+// get vehicle statement service
 export const getVehicleStatementService = async (
   id: string,
 ): Promise<VehicleStatement | null> => {
@@ -121,14 +121,10 @@ export const getVehicleStatementService = async (
     where: {
       id,
     },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
   })
 
   if (!result) {
-    throw new Error('VehicleStatement retrived failed')
+    throw new Error('Vehicle statement retrived failed')
   }
 
   return result
