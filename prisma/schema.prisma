@@ -55,6 +55,15 @@ model Vehicle {
   @@map("vehicles")
 }
 
+model VehicleRoute {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt DateTime @default(now())
+
+  @@map("vehicleRoutes")
+}
+
 model VehicleStatement {
   id        String  @id @default(uuid())
   date      String
