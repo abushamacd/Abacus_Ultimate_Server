@@ -198,7 +198,7 @@ export const updateVehicleStatementService = async (
   return result
 }
 
-// delete vehicleStatement service
+// delete vehicle statement service
 export const deleteVehicleStatementService = async (
   id: string,
 ): Promise<VehicleStatement | null> => {
@@ -206,47 +206,48 @@ export const deleteVehicleStatementService = async (
     where: {
       id,
     },
-    // include: {
-    //   // @ts-ignore
-    //   tasks: {
-    //     orderBy: {
-    //       position: 'asc',
-    //     },
-    //   },
-    // },
   })
 
-  if (!isExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'VehicleStatement not found')
-  }
-
-  const result = await prisma.vehicleStatement.delete({
+  const vehicle = await prisma.vehicle.findFirst({
     where: {
-      id,
+      id: isExist?.vehicleId,
     },
   })
 
-  // await prisma.$transaction(async transactionClient => {
-  //   await asyncForEach(isExist?.sections, async (section: VehicleStatement) => {
-  //     await transactionClient.task.deleteMany({
-  //       where: {
-  //         sectionId: section?.id,
-  //       },
-  //     })
-  //   })
+  if (!vehicle || !isExist) {
+    throw new ApiError(
+      !vehicle ? httpStatus.NOT_FOUND : httpStatus.BAD_REQUEST,
+      !vehicle ? 'Vehicle not found' : 'Vehicle statement not found',
+    )
+  }
 
-  //   await transactionClient.section.deleteMany({
-  //     where: {
-  //       vehicleStatementId: id,
-  //     },
-  //   })
+  const result = await prisma.$transaction(async transactionClient => {
+    // minus previous figure
+    vehicle.oil -= isExist?.oil
+    vehicle.income -= isExist?.income
+    vehicle.expense -= isExist?.expense
+    vehicle.welfare -= isExist?.welfare
+    vehicle.servicing -= isExist?.servicing
 
-  //   await transactionClient.vehicleStatement.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   })
-  // })
+    await transactionClient.vehicle.update({
+      where: {
+        id: isExist?.vehicleId,
+      },
+      data: vehicle,
+    })
+
+    const vStatement = await prisma.vehicleStatement.delete({
+      where: {
+        id,
+      },
+    })
+
+    return vStatement
+  })
+
+  if (!result) {
+    throw new Error('VehicleStatement update failed')
+  }
 
   return result
 }

@@ -26,10 +26,7 @@ router
 router
   .route('/:id')
   .get(auth(ENUM_USER_ROLE.OWNER), getVehicleStatement)
-  .patch(
-    auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
-    updateVehicleStatement,
-  )
+  .patch(auth(ENUM_USER_ROLE.OWNER), updateVehicleStatement)
   .delete(auth(ENUM_USER_ROLE.OWNER), deleteVehicleStatement)
 
 export default router

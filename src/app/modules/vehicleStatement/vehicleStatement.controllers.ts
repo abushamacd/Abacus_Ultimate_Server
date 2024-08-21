@@ -70,7 +70,7 @@ export const updateVehicleStatement = tryCatch(
   },
 )
 
-// delete vehicleStatement
+// delete vehicle statement
 export const deleteVehicleStatement = tryCatch(
   async (req: Request, res: Response) => {
     const { id } = req.params
@@ -78,7 +78,7 @@ export const deleteVehicleStatement = tryCatch(
     sendRes<VehicleStatement | null>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'VehicleStatement deleted successfully',
+      message: 'Vehicle statement deleted successfully',
       data: result,
     })
   },
