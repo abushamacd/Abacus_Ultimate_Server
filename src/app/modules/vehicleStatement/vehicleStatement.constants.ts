@@ -1,4 +1,2 @@
-
-export const vehicleStatementFilterableFields: string[] = ['searchTerm', 'role']
-export const vehicleStatementSearchableFields: string[] = ['name', 'phone']
-
+export const vehicleStatementFilterableFields: string[] = ['searchTerm', 'date']
+export const vehicleStatementSearchableFields: string[] = ['route', 'date']

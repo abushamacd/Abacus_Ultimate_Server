@@ -80,10 +80,10 @@ export const getVehiclesService = async (
         : {
             createdAt: 'asc',
           },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+    // include: {
+    //   driver: true,
+    //   supervisor: true,
+    // },
   })
 
   if (!result) {

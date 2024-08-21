@@ -49,7 +49,7 @@ export const createVehicleStatementService = async (
   return result
 }
 
-// get vehicleStatements service
+// get vehicle statements service
 export const getVehicleStatementsService = async (
   filters: IVehicleStatementFilterRequest,
   options: IPaginationOptions,
@@ -91,16 +91,12 @@ export const getVehicleStatementsService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'asc',
+            createdAt: 'desc',
           },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
   })
 
   if (!result) {
-    throw new Error('VehicleStatement retrived failed')
+    throw new Error('Vehicle statement retrived failed')
   }
 
   const total = await prisma.vehicleStatement.count({

@@ -27,7 +27,7 @@ export const createVehicleStatement = tryCatch(
   },
 )
 
-// get vehicleStatements controller
+// get vehicle statements controller
 export const getVehicleStatements = tryCatch(
   async (req: Request, res: Response) => {
     const filters = pick(req.query, vehicleStatementFilterableFields)
@@ -36,7 +36,7 @@ export const getVehicleStatements = tryCatch(
     sendRes<VehicleStatement[]>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'VehicleStatements retrived successfully',
+      message: 'Vehicle statements retrived successfully',
       meta: result?.meta,
       data: result?.data,
     })
