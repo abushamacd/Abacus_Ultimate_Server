@@ -75,16 +75,16 @@ export const refreshToken = tryCatch(async (req: Request, res: Response) => {
   const result = await refreshTokenService(refreshToken)
 
   // Set Refresh Token in Cookies
-  const cookieOptions = {
-    secure: config.env === 'production',
-    httpOnly: true,
-  }
-  res.cookie('refreshToken', refreshToken, cookieOptions)
+  // const cookieOptions = {
+  //   secure: config.env === 'production',
+  //   httpOnly: true,
+  // }
+  // res.cookie('refreshToken', refreshToken, cookieOptions)
 
   sendRes<IRefreshTokenResponse>(res, {
     statusCode: 200,
     success: true,
-    message: 'Sign in successfully',
+    message: 'New access token successfully',
     data: result,
   })
 })
