@@ -16,14 +16,11 @@ import { ApiError } from '../../../errorFormating/apiError'
 import httpStatus from 'http-status'
 
 // get user profile service
-export const getUserProfileService = async (payload: string) => {
+export const getUserProfileService = async (id: string) => {
   const result = await prisma.user.findUnique({
     where: {
-      phone: payload,
+      id,
     },
-    // include: {
-    //   tasks: true,
-    // },
   })
 
   return result
@@ -32,6 +29,46 @@ export const getUserProfileService = async (payload: string) => {
 // update user profile service
 export const updateUserProfileService = async (id: string, payload: User) => {
   const { role, password, ...userData } = payload
+
+  const isExist = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found !')
+  }
+
+  // phone and email  existency check in another user
+  const phoneExist = await prisma.user.findUnique({
+    where: {
+      phone: userData.phone,
+    },
+  })
+
+  if (isExist.phone !== phoneExist?.phone && phoneExist) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Phone number is used in another user',
+    )
+  }
+
+  if (userData.email) {
+    const emailExist = await prisma.user.findUnique({
+      where: {
+        email: userData.email,
+      },
+    })
+
+    if (isExist.email !== emailExist?.email && emailExist) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        'Email is used in another user',
+      )
+    }
+  }
+
   const result = await prisma.user.update({
     where: {
       id,

@@ -17,10 +17,10 @@ export const globalError: ErrorRequestHandler = (
   error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  let statusCode = 400
-  let message = 'Something went wrong'
+  let statusCode = 403
+  let message = 'JWT Expired'
   let errorMessage: IErrorMessage[] = []
 
   // Dependency

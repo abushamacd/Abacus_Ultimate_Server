@@ -18,7 +18,7 @@ import { paginationFields } from '../../../constants/pagination'
 
 // get user profile controller
 export const getUserProfile = tryCatch(async (req, res) => {
-  const result = await getUserProfileService(req.user?.phone)
+  const result = await getUserProfileService(req.user?.id)
   sendRes<User>(res, {
     statusCode: httpStatus.OK,
     success: true,
