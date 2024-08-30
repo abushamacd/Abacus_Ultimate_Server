@@ -14,7 +14,7 @@ export const isExist = async (payload: string): Promise<User | null> => {
 
 export const isPasswordMatched = async (
   givenPassword: string,
-  savedPassword: string
+  savedPassword: string,
 ) => {
   return await bcrypt.compare(givenPassword, savedPassword)
 }

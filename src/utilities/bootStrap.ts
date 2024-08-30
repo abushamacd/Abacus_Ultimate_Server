@@ -14,7 +14,7 @@ export async function bootStrap() {
       logger.info(
         config.env === 'development'
           ? `==== ✌️  Your server is running on http://localhost:${config.port} ====`
-          : `Test on deployed live server`
+          : `Test on deployed live server`,
       )
     })
   } catch (error) {

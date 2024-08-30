@@ -21,7 +21,7 @@ export const logger = createLogger({
         'logs',
         'winston',
         'successes',
-        'Shama-%DATE%-success.log'
+        'Shama-%DATE%-success.log',
       ),
       datePattern: 'HH - DD.MM.YYYY',
       zippedArchive: true,
@@ -42,7 +42,7 @@ export const errorLogger = createLogger({
         'logs',
         'winston',
         'errors',
-        'Shama-%DATE%-error.log'
+        'Shama-%DATE%-error.log',
       ),
       datePattern: 'HH - DD.MM.YYYY',
       zippedArchive: true,

@@ -1,4 +1,3 @@
-
 // vehicleStatement interfaces
 export type IVehicleStatement = {
   field_name: string

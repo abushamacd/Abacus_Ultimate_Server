@@ -1,6 +1,6 @@
 export const pick = <T extends Record<string, unknown>, k extends keyof T>(
   obj: T,
-  keys: k[]
+  keys: k[],
 ): Partial<T> => {
   const finalObj: Partial<T> = {}
 

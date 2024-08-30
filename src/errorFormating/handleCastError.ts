@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { IErrorMessage } from '../interface/error'
 
 export const handleCastError = (
-  error: Prisma.PrismaClientKnownRequestError
+  error: Prisma.PrismaClientKnownRequestError,
 ) => {
   let errors: IErrorMessage[] = []
   let message = ''

@@ -1,4 +1,3 @@
-
 // vehicleRoute interfaces
 export type IVehicleRoute = {
   field_name: string

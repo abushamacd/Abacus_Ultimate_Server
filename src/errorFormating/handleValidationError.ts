@@ -2,7 +2,7 @@ import { IErrorResponse } from '../interface/common'
 import { Prisma } from '@prisma/client'
 
 export const handleValidationError = (
-  error: Prisma.PrismaClientValidationError
+  error: Prisma.PrismaClientValidationError,
 ): IErrorResponse => {
   const errors = [
     {
