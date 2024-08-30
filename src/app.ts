@@ -5,11 +5,12 @@ import { globalError } from './middleware/globalError'
 import { sendRes } from './utilities/sendRes'
 import httpStatus from 'http-status'
 import cookieParser from 'cookie-parser'
+import config from './config'
 const app: Application = express()
 
 // Middleware
 // app.use(cors())
-app.use(cors({ origin: 'https://adbms.netlify.app', credentials: true })) //for set referesh token to the cookies
+app.use(cors({ origin: config.client_url, credentials: true })) //for set referesh token to the cookies
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
