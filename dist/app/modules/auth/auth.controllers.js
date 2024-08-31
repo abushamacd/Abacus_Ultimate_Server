@@ -63,6 +63,7 @@ exports.signIn = (0, tryCatch_1.tryCatch)((req, res) => __awaiter(void 0, void 0
         const cookieOptions = {
             secure: config_1.default.env === 'production',
             httpOnly: true,
+            maxAge: 365 * 24 * 60 * 60 * 1000,
         };
         res.cookie('refreshToken', refreshToken, cookieOptions);
         (0, sendRes_1.sendRes)(res, {
