@@ -50,6 +50,7 @@ export const signIn = tryCatch(async (req: Request, res: Response) => {
     const cookieOptions = {
       secure: config.env === 'production',
       httpOnly: true,
+      SameSite: 'None',
       maxAge: 365 * 24 * 60 * 60 * 1000,
     }
     res.cookie('refreshToken', refreshToken, cookieOptions)
