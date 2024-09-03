@@ -204,7 +204,7 @@ export const getUsersService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'asc',
+            createdAt: 'desc',
           },
   })
   const total = await prisma.user.count({
