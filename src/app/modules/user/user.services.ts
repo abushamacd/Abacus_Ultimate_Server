@@ -138,6 +138,7 @@ export const uploadPhotoService = async (req: Request) => {
     if (!result) {
       throw new Error(`Photo upload failed`)
     }
+    return result
   } else {
     const file = req.file as IUploadFile
     const photo = await FileUploadHelper.uploadPhoto(file)
@@ -157,9 +158,9 @@ export const uploadPhotoService = async (req: Request) => {
     if (!result) {
       throw new Error(`Photo upload failed`)
     }
-  }
 
-  return user
+    return result
+  }
 }
 
 // get Users service

@@ -66,7 +66,7 @@ export const uploadPhoto = tryCatch(async (req, res) => {
   sendRes(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Blog image upload successfully',
+    message: 'Photo upload successfully',
     data: result,
   })
 })
