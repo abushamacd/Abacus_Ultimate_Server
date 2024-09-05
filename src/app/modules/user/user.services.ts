@@ -99,10 +99,10 @@ export const updateUserRoleService = async (payload: Partial<User>) => {
 }
 
 // get user profile service
-export const getUserService = async (phone: string) => {
+export const getUserService = async (id: string) => {
   const result = await prisma.user.findUnique({
     where: {
-      phone,
+      id,
     },
   })
 

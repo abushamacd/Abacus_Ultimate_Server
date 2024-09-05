@@ -51,7 +51,7 @@ export const updateUserRole = tryCatch(async (req, res) => {
 
 // get user
 export const getUser = tryCatch(async (req, res) => {
-  const result = await getUserService(req.params?.phone)
+  const result = await getUserService(req.params?.id)
   sendRes<User>(res, {
     statusCode: httpStatus.OK,
     success: true,

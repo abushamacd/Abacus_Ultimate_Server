@@ -51,9 +51,7 @@ router
     uploadPhoto,
   )
 
-router.route('/:phone').get(getUser)
-
-router.route('/:id').patch(auth(ENUM_USER_ROLE.OWNER), updateUser)
+router.route('/:id').get(getUser).patch(auth(ENUM_USER_ROLE.OWNER), updateUser)
 
 router.route('/:id').delete(auth(ENUM_USER_ROLE.OWNER), deleteUser)
 

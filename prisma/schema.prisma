@@ -17,7 +17,7 @@ model User {
   role               role      @default(Consumer)
   address            String
   public_id          String?
-  url                String?
+  url                String?   @default("https://res.cloudinary.com/delu47omx/image/upload/v1725515799/avater_zdqflq.jpg")
   status             status    @default(green)
   isActive           Boolean   @default(true)
   activationToken    String?   @db.LongText
