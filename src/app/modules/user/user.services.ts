@@ -82,15 +82,19 @@ export const updateUserProfileService = async (id: string, payload: User) => {
 // update user role service
 export const updateUserRoleService = async (payload: Partial<User>) => {
   const { id, role } = payload
-  const user: any = await prisma.user.findUnique({
+  const isExist = await prisma.user.findUnique({
     where: {
-      id: id,
+      id,
     },
   })
 
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found !')
+  }
+
   const result = await prisma.user.update({
     where: {
-      id: payload?.id,
+      id,
     },
     data: { role: role },
   })
