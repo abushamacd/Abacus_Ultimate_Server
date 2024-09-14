@@ -78,12 +78,9 @@ export const getVehiclesService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'asc',
+            createdAt: 'desc',
           },
-    // include: {
-    //   driver: true,
-    //   supervisor: true,
-    // },
+    // include: vehiclePopulate,
   })
 
   if (!result) {
