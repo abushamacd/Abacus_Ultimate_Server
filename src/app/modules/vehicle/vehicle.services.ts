@@ -8,7 +8,7 @@ import { IVehicleFilterRequest } from './vehicle.interfaces'
 import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
-import { vehicleSearchableFields } from './vehicle.constants'
+import { vehiclePopulate, vehicleSearchableFields } from './vehicle.constants'
 // import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create vehicle service
@@ -109,10 +109,7 @@ export const getVehicleService = async (
     where: {
       id,
     },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+    include: vehiclePopulate,
   })
 
   if (!result) {
