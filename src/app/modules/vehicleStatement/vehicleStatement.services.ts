@@ -137,6 +137,9 @@ export const updateVehicleStatementService = async (
   id: string,
   payload: Partial<VehicleStatement>,
 ): Promise<VehicleStatement | null> => {
+  if (payload.comment && payload.comment?.length > 500) {
+    throw new Error('Details is too long!')
+  }
   const isExist = await prisma.vehicleStatement.findUnique({
     where: {
       id,

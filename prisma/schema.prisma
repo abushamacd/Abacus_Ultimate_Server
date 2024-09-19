@@ -41,7 +41,7 @@ model Vehicle {
   savings      Int     @default(0)
   welfare      Int     @default(0)
   servicing    Int     @default(0)
-  comment      String?
+  comment      String? @db.VarChar(500)
 
   driverId     String
   driver       User   @relation("driverRelation", fields: [driverId], references: [id])
@@ -73,7 +73,7 @@ model VehicleStatement {
   expense   Int
   welfare   Int     @default(0)
   servicing Int     @default(0)
-  comment   String?
+  comment   String? @db.VarChar(500)
 
   vehicleId String
   vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
