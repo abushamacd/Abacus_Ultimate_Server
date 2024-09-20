@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma, Vehicle } from '@prisma/client'
+import { Prisma, Vehicle, VehicleStatement } from '@prisma/client'
 import prisma from '../../../utilities/prisma'
 import httpStatus from 'http-status'
 import { ApiError } from './../../../errorFormating/apiError'
@@ -9,7 +9,7 @@ import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { vehiclePopulate, vehicleSearchableFields } from './vehicle.constants'
-// import { asyncForEach } from '../../../utilities/asyncForEach'
+import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create vehicle service
 export const createVehicleService = async (
@@ -163,47 +163,35 @@ export const deleteVehicleService = async (
     where: {
       id,
     },
-    // include: {
-    //   // @ts-ignore
-    //   tasks: {
-    //     orderBy: {
-    //       position: 'asc',
-    //     },
-    //   },
-    // },
+    include: {
+      vehicleStatements: true,
+    },
   })
 
   if (!isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Vehicle not found')
   }
 
-  const result = await prisma.vehicle.delete({
-    where: {
-      id,
-    },
+  const result = await prisma.$transaction(async transactionClient => {
+    await asyncForEach(
+      isExist?.vehicleStatements,
+      async (vehicleStatement: VehicleStatement) => {
+        await transactionClient.vehicleStatement.deleteMany({
+          where: {
+            vehicleId: vehicleStatement?.vehicleId,
+          },
+        })
+      },
+    )
+
+    const deletedVehicle = await transactionClient.vehicle.delete({
+      where: {
+        id,
+      },
+    })
+
+    return deletedVehicle
   })
-
-  // await prisma.$transaction(async transactionClient => {
-  //   await asyncForEach(isExist?.sections, async (section: Vehicle) => {
-  //     await transactionClient.task.deleteMany({
-  //       where: {
-  //         sectionId: section?.id,
-  //       },
-  //     })
-  //   })
-
-  //   await transactionClient.section.deleteMany({
-  //     where: {
-  //       vehicleId: id,
-  //     },
-  //   })
-
-  //   await transactionClient.vehicle.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   })
-  // })
 
   return result
 }
