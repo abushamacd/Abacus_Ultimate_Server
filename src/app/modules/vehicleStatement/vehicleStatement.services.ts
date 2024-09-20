@@ -93,7 +93,7 @@ export const getVehicleStatementsService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'desc',
+            date: 'desc',
           },
   })
 
