@@ -83,6 +83,21 @@ model VehicleStatement {
   @@map("vehicleStatements")
 }
 
+model Supplier {
+  id         String  @id @default(uuid())
+  name       String  @unique
+  address    String
+  ownerName  String
+  ownerPhone String
+  srName     String
+  srPhone    String
+  comment    String? @db.VarChar(500)
+
+  createdAt DateTime @default(now())
+
+  @@map("suppliers")
+}
+
 enum role {
   Consumer
   Retailer
