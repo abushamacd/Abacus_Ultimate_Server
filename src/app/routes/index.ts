@@ -6,6 +6,7 @@ import vehicleRoute from '../modules/vehicle/vehicle.routes'
 import vehicleStatementRoute from '../modules/vehicleStatement/vehicleStatement.routes'
 import vehicleRouteRoute from '../modules/vehicleRoute/vehicleRoute.routes'
 import supplierRoute from '../modules/supplier/supplier.routes'
+import unitRoute from '../modules/unit/unit.routes'
 
 const appRoutes = [
   {
@@ -31,6 +32,10 @@ const appRoutes = [
   {
     path: '/supplier',
     route: supplierRoute,
+  },
+  {
+    path: '/unit',
+    route: unitRoute,
   },
 ]
 

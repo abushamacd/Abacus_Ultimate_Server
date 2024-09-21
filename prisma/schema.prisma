@@ -98,6 +98,15 @@ model Supplier {
   @@map("suppliers")
 }
 
+model Unit {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt DateTime @default(now())
+
+  @@map("units")
+}
+
 enum role {
   Consumer
   Retailer
