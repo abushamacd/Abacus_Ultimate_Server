@@ -107,6 +107,24 @@ model Unit {
   @@map("units")
 }
 
+model Product {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  supplierId  String?
+  unitId      String
+  quantity    Int
+  minQuantity Int
+  purchase    Int
+  sell        Int
+  retail      Int
+  comment     String? @db.VarChar(500)
+  updateBy    String?
+
+  createdAt DateTime @default(now())
+
+  @@map("products")
+}
+
 enum role {
   Consumer
   Retailer
