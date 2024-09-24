@@ -1,17 +1,22 @@
-
 import { Request, Response } from 'express'
 import { tryCatch } from '../../../utilities/tryCatch'
 import { sendRes } from '../../../utilities/sendRes'
 import httpStatus from 'http-status'
 import { Product } from '@prisma/client'
-import {createProductService,  deleteProductService, getProductService, getProductsService,   updateProductService } from './product.services'
+import {
+  createProductService,
+  deleteProductService,
+  getProductService,
+  getProductsService,
+  updateProductService,
+} from './product.services'
 import { productFilterableFields } from './product.constants'
 import { paginationFields } from '../../../constants/pagination'
 import { pick } from '../../../utilities/pick'
 
 // create product controller
 export const createProduct = tryCatch(async (req: Request, res: Response) => {
-  const result = await createProductService(req.body)
+  const result = await createProductService(req.user, req.body)
   sendRes<Product>(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -19,8 +24,6 @@ export const createProduct = tryCatch(async (req: Request, res: Response) => {
     data: result,
   })
 })
-
-
 
 // get products controller
 export const getProducts = tryCatch(async (req: Request, res: Response) => {
@@ -70,4 +73,3 @@ export const deleteProduct = tryCatch(async (req: Request, res: Response) => {
     data: result,
   })
 })
-

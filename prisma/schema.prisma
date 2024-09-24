@@ -93,7 +93,8 @@ model Supplier {
   srPhone    String
   comment    String? @db.VarChar(500)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  products  Product[]
 
   @@map("suppliers")
 }
@@ -102,7 +103,8 @@ model Unit {
   id   String @id @default(uuid())
   name String @unique
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  products  Product[]
 
   @@map("units")
 }
@@ -110,8 +112,6 @@ model Unit {
 model Product {
   id          String  @id @default(uuid())
   name        String  @unique
-  supplierId  String?
-  unitId      String
   quantity    Int
   minQuantity Int
   purchase    Int
@@ -119,6 +119,11 @@ model Product {
   retail      Int
   comment     String? @db.VarChar(500)
   updateBy    String
+
+  unitId     String
+  unit       Unit     @relation(fields: [unitId], references: [id])
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
 
   createdAt DateTime @default(now())
 

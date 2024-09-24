@@ -17,7 +17,7 @@ const router = express.Router()
 router
   .route('/')
   .post(
-    // auth(ENUM_USER_ROLE.OWNER,),
+    auth(ENUM_USER_ROLE.OWNER),
     reqValidate(createProductZod),
     createProduct,
   )

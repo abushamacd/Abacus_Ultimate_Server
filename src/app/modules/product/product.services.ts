@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, Product } from '@prisma/client'
@@ -9,21 +8,24 @@ import { IProductFilterRequest } from './product.interfaces'
 import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
-import { productSearchableFields } from './product.constants'
+import { productPopulate, productSearchableFields } from './product.constants'
+import { JwtPayload } from 'jsonwebtoken'
 // import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create product service
 export const createProductService = async (
+  user: JwtPayload | null,
   data: Product,
 ): Promise<Product | null> => {
+  data.updateBy = user?.name
   const product = await prisma.product.findFirst({
     where: {
-      filed_name: data?.filed_name,
+      name: data?.name,
     },
   })
 
   if (product) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Product is already exist")
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product is already exist')
   }
 
   const result = await prisma.product.create({
@@ -31,7 +33,7 @@ export const createProductService = async (
   })
 
   if (!result) {
-    throw new Error("Product create failed")
+    throw new Error('Product create failed')
   }
 
   return result
@@ -79,12 +81,9 @@ export const getProductsService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'desc',
+            name: 'desc',
           },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+    include: productPopulate,
   })
 
   if (!result) {
@@ -105,17 +104,18 @@ export const getProductsService = async (
   }
 }
 
-
 // get product service
-export const getProductService = async (id: string): Promise<Product | null>  => {
+export const getProductService = async (
+  id: string,
+): Promise<Product | null> => {
   const result = await prisma.product.findUnique({
     where: {
       id,
     },
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+    // include: {
+    //   driver: true,
+    //   supervisor: true,
+    // },
   })
 
   if (!result) {
@@ -145,10 +145,10 @@ export const updateProductService = async (
       id,
     },
     data: payload,
-    include: {
-      driver: true,
-      supervisor: true,
-    },
+    // include: {
+    //   driver: true,
+    //   supervisor: true,
+    // },
   })
 
   if (!result) {
@@ -210,4 +210,3 @@ export const deleteProductService = async (
 
   return result
 }
-
