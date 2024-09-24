@@ -7,6 +7,7 @@ import vehicleStatementRoute from '../modules/vehicleStatement/vehicleStatement.
 import vehicleRouteRoute from '../modules/vehicleRoute/vehicleRoute.routes'
 import supplierRoute from '../modules/supplier/supplier.routes'
 import unitRoute from '../modules/unit/unit.routes'
+import productRoute from '../modules/product/product.routes'
 
 const appRoutes = [
   {
@@ -36,6 +37,10 @@ const appRoutes = [
   {
     path: '/unit',
     route: unitRoute,
+  },
+  {
+    path: '/product',
+    route: productRoute,
   },
 ]
 
