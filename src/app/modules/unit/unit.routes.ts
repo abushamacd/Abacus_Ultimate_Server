@@ -1,7 +1,7 @@
 import express from 'express'
 import reqValidate from '../../../middleware/reqValidate'
-// import { auth } from '../../../middleware/auth'
-// import { ENUM_USER_ROLE } from '../../../enums/user'
+import { auth } from '../../../middleware/auth'
+import { ENUM_USER_ROLE } from '../../../enums/user'
 import { createUnitZod } from './unit.validations'
 import {
   createUnit,
@@ -17,28 +17,16 @@ const router = express.Router()
 router
   .route('/')
   .post(
-    // auth(ENUM_USER_ROLE.OWNER,),
+    auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
     reqValidate(createUnitZod),
     createUnit,
   )
-  .get(
-    // auth(ENUM_USER_ROLE.OWNER),
-    getUnits,
-  )
+  .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getUnits)
 
 router
   .route('/:id')
-  .get(
-    // auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
-    getUnit,
-  )
-  .patch(
-    // auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
-    updateUnit,
-  )
-  .delete(
-    // auth(ENUM_USER_ROLE.OWNER),
-    deleteUnit,
-  )
+  .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getUnit)
+  .patch(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), updateUnit)
+  .delete(auth(ENUM_USER_ROLE.OWNER), deleteUnit)
 
 export default router

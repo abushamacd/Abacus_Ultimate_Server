@@ -147,10 +147,17 @@ export const deleteUnitService = async (id: string): Promise<Unit | null> => {
     where: {
       id,
     },
+    include: {
+      products: true,
+    },
   })
 
   if (!isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Unit not found')
+  }
+
+  if (isExist?.products?.length > 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Unit has link with products')
   }
 
   const result = await prisma.unit.delete({
