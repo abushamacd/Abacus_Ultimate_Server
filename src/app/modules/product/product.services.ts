@@ -54,7 +54,6 @@ export const getProductsService = async (
       OR: productSearchableFields.map(field => ({
         [field]: {
           contains: searchTerm,
-          // mode: 'insensitive',
         },
       })),
     })
@@ -81,7 +80,7 @@ export const getProductsService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            name: 'desc',
+            name: 'asc',
           },
     include: productPopulate,
   })
@@ -112,10 +111,7 @@ export const getProductService = async (
     where: {
       id,
     },
-    // include: {
-    //   driver: true,
-    //   supervisor: true,
-    // },
+    include: productPopulate,
   })
 
   if (!result) {
