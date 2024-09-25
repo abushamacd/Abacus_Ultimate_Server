@@ -17,12 +17,12 @@ const router = express.Router()
 router
   .route('/')
   .post(
-    // auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
+    auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
     reqValidate(createSupplierZod),
     createSupplier,
   )
   .get(
-    // auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
+    auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER),
     getSuppliers,
   )
 

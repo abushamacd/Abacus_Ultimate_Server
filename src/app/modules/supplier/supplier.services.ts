@@ -112,10 +112,16 @@ export const getSupplierService = async (
     where: {
       id,
     },
-    // include: {
-    //   driver: true,
-    //   supervisor: true,
-    // },
+    include: {
+      products: {
+        orderBy: {
+          name: 'asc',
+        },
+        include: {
+          unit: true,
+        },
+      },
+    },
   })
 
   if (!result) {
