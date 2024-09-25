@@ -151,10 +151,6 @@ export const updateSupplierService = async (
       id,
     },
     data: payload,
-    // include: {
-    //   driver: true,
-    //   supervisor: true,
-    // },
   })
 
   if (!result) {
@@ -172,18 +168,20 @@ export const deleteSupplierService = async (
     where: {
       id,
     },
-    // include: {
-    //   // @ts-ignore
-    //   tasks: {
-    //     orderBy: {
-    //       position: 'asc',
-    //     },
-    //   },
-    // },
+    include: {
+      products: true,
+    },
   })
 
   if (!isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Supplier not found')
+  }
+
+  if (isExist?.products?.length > 0) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Supplier has link with products',
+    )
   }
 
   const result = await prisma.supplier.delete({
@@ -191,28 +189,6 @@ export const deleteSupplierService = async (
       id,
     },
   })
-
-  // await prisma.$transaction(async transactionClient => {
-  //   await asyncForEach(isExist?.sections, async (section: Supplier) => {
-  //     await transactionClient.task.deleteMany({
-  //       where: {
-  //         sectionId: section?.id,
-  //       },
-  //     })
-  //   })
-
-  //   await transactionClient.section.deleteMany({
-  //     where: {
-  //       supplierId: id,
-  //     },
-  //   })
-
-  //   await transactionClient.supplier.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   })
-  // })
 
   return result
 }
