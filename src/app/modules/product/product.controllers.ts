@@ -53,7 +53,7 @@ export const getProduct = tryCatch(async (req: Request, res: Response) => {
 // update product controller
 export const updateProduct = tryCatch(async (req: Request, res: Response) => {
   const { id } = req.params
-  const result = await updateProductService(id, req?.body)
+  const result = await updateProductService(id, req.user, req?.body)
   sendRes<Product>(res, {
     statusCode: httpStatus.OK,
     success: true,

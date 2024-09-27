@@ -124,8 +124,10 @@ export const getProductService = async (
 // update product service
 export const updateProductService = async (
   id: string,
+  user: JwtPayload | null,
   payload: Partial<Product>,
 ): Promise<Product | null> => {
+  payload.updateBy = user?.name
   const isExist = await prisma.product.findUnique({
     where: {
       id,
@@ -141,10 +143,6 @@ export const updateProductService = async (
       id,
     },
     data: payload,
-    // include: {
-    //   driver: true,
-    //   supervisor: true,
-    // },
   })
 
   if (!result) {
