@@ -26,6 +26,7 @@ model User {
   createdAt          DateTime  @default(now())
   vehicleDriver      Vehicle[] @relation("driverRelation")
   vehicleSupervisor  Vehicle[] @relation("supervisorRelation")
+  invoices           Invoice[]
 
   @@map("users")
 }
@@ -128,6 +129,26 @@ model Product {
   createdAt DateTime @default(now())
 
   @@map("products")
+}
+
+model Invoice {
+  id           String  @id @default(uuid())
+  customerName String
+  date         String
+  discount     Int
+  due          Int
+  total        Int
+  profit       Int
+  note         String? @db.VarChar(500)
+  updateBy     String
+  products     Json
+
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("invoices")
 }
 
 enum role {

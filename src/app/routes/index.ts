@@ -8,6 +8,7 @@ import vehicleRouteRoute from '../modules/vehicleRoute/vehicleRoute.routes'
 import supplierRoute from '../modules/supplier/supplier.routes'
 import unitRoute from '../modules/unit/unit.routes'
 import productRoute from '../modules/product/product.routes'
+import invoiceRoute from '../modules/invoice/invoice.routes'
 
 const appRoutes = [
   {
@@ -41,6 +42,10 @@ const appRoutes = [
   {
     path: '/product',
     route: productRoute,
+  },
+  {
+    path: '/invoice',
+    route: invoiceRoute,
   },
 ]
 
