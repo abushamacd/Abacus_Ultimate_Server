@@ -18,6 +18,14 @@ export const createInvoiceService = async (
 ): Promise<Invoice | null> => {
   data.updateBy = user?.name
 
+  const lastInvoice = await prisma.invoice.findFirst({
+    orderBy: {
+      invoiceNumber: 'desc',
+    },
+  })
+
+  if (lastInvoice) data.invoiceNumber = lastInvoice.invoiceNumber + 1
+
   data.products = JSON.stringify(data.products)
 
   const result = await prisma.invoice.create({

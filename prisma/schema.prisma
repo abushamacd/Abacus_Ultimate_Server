@@ -132,16 +132,17 @@ model Product {
 }
 
 model Invoice {
-  id           String  @id @default(uuid())
-  customerName String
-  date         String
-  discount     Int
-  due          Int
-  total        Int
-  profit       Int
-  note         String? @db.VarChar(500)
-  updateBy     String
-  products     Json
+  id            String  @id @default(uuid())
+  invoiceNumber Int     @default(0)
+  customerName  String
+  date          String
+  discount      Int
+  due           Int
+  total         Int
+  profit        Int
+  note          String? @db.VarChar(500)
+  updateBy      String
+  products      Json
 
   customerId String
   customer   User   @relation(fields: [customerId], references: [id])
