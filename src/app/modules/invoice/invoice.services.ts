@@ -81,7 +81,7 @@ export const getInvoicesService = async (
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            date: 'desc',
+            invoiceNumber: 'desc',
           },
   })
 

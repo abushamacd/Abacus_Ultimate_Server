@@ -1,4 +1,6 @@
-
-export const invoiceFilterableFields: string[] = ['searchTerm', 'role']
-export const invoiceSearchableFields: string[] = ['name', 'phone']
-
+export const invoiceFilterableFields: string[] = ['searchTerm']
+export const invoiceSearchableFields: string[] = [
+  'name',
+  'date',
+  'invoiceNumber',
+]
