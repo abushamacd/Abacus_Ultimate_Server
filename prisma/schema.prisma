@@ -113,11 +113,11 @@ model Unit {
 model Product {
   id          String  @id @default(uuid())
   name        String  @unique
-  quantity    Int
-  minQuantity Int
-  purchase    Int
-  sell        Int
-  retail      Int
+  quantity    Decimal
+  minQuantity Decimal
+  purchase    Decimal
+  sell        Decimal
+  retail      Decimal
   comment     String? @db.VarChar(500)
   updateBy    String
 
@@ -136,10 +136,10 @@ model Invoice {
   invoiceNumber Int     @default(0)
   customerName  String
   date          String
-  discount      Int
-  due           Int
-  total         Int
-  profit        Int
+  discount      Decimal
+  due           Decimal
+  total         Decimal
+  profit        Decimal
   note          String? @db.VarChar(500)
   updateBy      String
   products      Json

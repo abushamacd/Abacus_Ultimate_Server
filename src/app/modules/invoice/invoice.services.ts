@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, Invoice } from '@prisma/client'
@@ -9,7 +10,7 @@ import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { invoiceSearchableFields } from './invoice.constants'
-// import { asyncForEach } from '../../../utilities/asyncForEach'
+import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create invoice service
 export const createInvoiceService = async (
@@ -26,10 +27,30 @@ export const createInvoiceService = async (
 
   if (lastInvoice) data.invoiceNumber = lastInvoice.invoiceNumber + 1
 
-  data.products = JSON.stringify(data.products)
+  const result = await prisma.$transaction(async transactionClient => {
+    await asyncForEach(data?.products, async (product: any) => {
+      const findProduct = await transactionClient.product.findUnique({
+        where: {
+          name: product.product,
+        },
+      })
 
-  const result = await prisma.invoice.create({
-    data,
+      if (findProduct)
+        await transactionClient.product.update({
+          where: {
+            name: product.product,
+          },
+          data: { quantity: +findProduct.quantity - product.quantity },
+        })
+    })
+
+    data.products = JSON.stringify(data.products)
+
+    const result = await prisma.invoice.create({
+      data,
+    })
+
+    return result
   })
 
   if (!result) {
@@ -157,47 +178,44 @@ export const deleteInvoiceService = async (
     where: {
       id,
     },
-    // include: {
-    //   // @ts-ignore
-    //   tasks: {
-    //     orderBy: {
-    //       position: 'asc',
-    //     },
-    //   },
-    // },
   })
 
   if (!isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invoice not found')
   }
 
-  const result = await prisma.invoice.delete({
-    where: {
-      id,
-    },
+  const products: any = isExist.products
+  const data = JSON.parse(products)
+
+  const result = await prisma.$transaction(async transactionClient => {
+    await asyncForEach(data, async (product: any) => {
+      const findProduct = await transactionClient.product.findUnique({
+        where: {
+          name: product.product,
+        },
+      })
+
+      if (findProduct)
+        await transactionClient.product.update({
+          where: {
+            name: product.product,
+          },
+          data: { quantity: +findProduct.quantity + product.quantity },
+        })
+    })
+
+    const result = await prisma.invoice.delete({
+      where: {
+        id,
+      },
+    })
+
+    return result
   })
 
-  // await prisma.$transaction(async transactionClient => {
-  //   await asyncForEach(isExist?.sections, async (section: Invoice) => {
-  //     await transactionClient.task.deleteMany({
-  //       where: {
-  //         sectionId: section?.id,
-  //       },
-  //     })
-  //   })
-
-  //   await transactionClient.section.deleteMany({
-  //     where: {
-  //       invoiceId: id,
-  //     },
-  //   })
-
-  //   await transactionClient.invoice.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   })
-  // })
+  if (!result) {
+    throw new Error('Invoice delete failed')
+  }
 
   return result
 }
