@@ -136,7 +136,6 @@ model Invoice {
   invoiceNumber Int     @default(0)
   customerName  String
   date          String
-  discount      Float
   due           Float
   total         Float
   profit        Float
