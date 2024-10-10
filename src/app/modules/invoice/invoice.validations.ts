@@ -9,9 +9,6 @@ export const createInvoiceZod = z.object({
     date: z.string({
       required_error: 'Date is required',
     }),
-    discount: z.number().nonnegative({
-      message: 'Discount is required and should be a non-negative integer',
-    }),
     due: z.number().nonnegative({
       message: 'Due is required and should be a non-negative integer',
     }),
