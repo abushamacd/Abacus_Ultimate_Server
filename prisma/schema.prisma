@@ -16,10 +16,12 @@ model User {
   password           String
   role               role      @default(Consumer)
   address            String
+  balance            Float?    @default(0)
+  due                Float?    @default(0)
   public_id          String?
   url                String?   @default("https://res.cloudinary.com/delu47omx/image/upload/v1725515799/avater_zdqflq.jpg")
   status             status    @default(green)
-  isActive           Boolean   @default(true)
+  hasAccess          Boolean   @default(true)
   activationToken    String?   @db.LongText
   passwordResetToken String?   @db.LongText
   passwordChangeAt   DateTime?
