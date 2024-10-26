@@ -7,6 +7,7 @@ import {
   getUserProfileService,
   getUserService,
   getUsersService,
+  updateUserAccessService,
   updateUserProfileService,
   updateUserRoleService,
   updateUserService,
@@ -45,6 +46,17 @@ export const updateUserRole = tryCatch(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'User role update successfully',
+    data: result,
+  })
+})
+
+// update user access controller
+export const updateUserAccess = tryCatch(async (req, res) => {
+  const result = await updateUserAccessService(req.params.id, req.body)
+  sendRes<User>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User access update successfully',
     data: result,
   })
 })

@@ -7,6 +7,7 @@ import {
   getUserProfile,
   getUsers,
   updateUser,
+  updateUserAccess,
   updateUserProfile,
   updateUserRole,
   uploadPhoto,
@@ -36,6 +37,7 @@ router
   .patch(auth(ENUM_USER_ROLE.OWNER), updateUserProfile)
 
 router.route('/changeRole').patch(auth(ENUM_USER_ROLE.OWNER), updateUserRole)
+router.route('/changeAccess/:id').patch(auth(ENUM_USER_ROLE.OWNER), updateUserAccess)
 
 router
   .route('/photo')

@@ -92,6 +92,13 @@ export const updateUserRoleService = async (payload: Partial<User>) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found !')
   }
 
+  if (isExist.role === 'Owner') {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      `Don't try to change owner role`,
+    )
+  }
+
   const result = await prisma.user.update({
     where: {
       id,
@@ -100,6 +107,48 @@ export const updateUserRoleService = async (payload: Partial<User>) => {
   })
 
   return result
+}
+
+// update user access service
+export const updateUserAccessService = async (id: string, payload: any) => {
+  const isExist = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found !')
+  }
+
+  if (isExist.role === 'Owner') {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      `Don't try to control owner access`,
+    )
+  }
+
+  if (payload?.value === true) {
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: { hasAccess: payload?.value },
+    })
+
+    return result
+  }
+
+  if (payload?.value === false) {
+    const result = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: { hasAccess: payload?.value },
+    })
+
+    return result
+  }
 }
 
 // get user profile service
