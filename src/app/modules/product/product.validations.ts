@@ -15,32 +15,27 @@ export const createProductZod = z.object({
       .number({
         required_error: 'Quantity is required',
       })
-      .int('Quantity must be an integer')
       .min(0, 'Quantity must be at least 0'),
 
     minQuantity: z
       .number({
         required_error: 'Minimum quantity is required',
       })
-      .int('Minimum quantity must be an integer')
       .min(0, 'Minimum quantity must be at least 0'),
     purchase: z
       .number({
         required_error: 'Purchase price is required',
       })
-      .int('Purchase price must be an integer')
       .min(0, 'Purchase price must be at least 0'),
     sell: z
       .number({
         required_error: 'Sell price is required',
       })
-      .int('Sell price must be an integer')
       .min(0, 'Sell price must be at least 0'),
     retail: z
       .number({
         required_error: 'Retail price is required',
       })
-      .int('Retail price must be an integer')
       .min(0, 'Retail price must be at least 0'),
     comment: z
       .string()
