@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -49,6 +50,13 @@ export const createInvoiceService = async (
     const result = await prisma.invoice.create({
       data,
     })
+
+    if (data?.due > 0) {
+      await transactionClient.user.update({
+        where: { id: data.customerId },
+        data: { due: { increment: data.due } },
+      })
+    }
 
     return result
   })
@@ -144,8 +152,10 @@ export const getInvoiceService = async (
 // update invoice service
 export const updateInvoiceService = async (
   id: string,
+  user: any,
   payload: any,
 ): Promise<Invoice | null> => {
+  payload.updateBy = user?.name
   const isExist = await prisma.invoice.findUnique({
     where: {
       id,
@@ -156,18 +166,119 @@ export const updateInvoiceService = async (
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invoice not found')
   }
 
-  const result = await prisma.invoice.update({
-    where: {
-      id,
-    },
-    data: payload,
-  })
+  if (isExist?.customerId === payload?.customerId) {
+    const result = await prisma.$transaction(async transactionClient => {
+      await asyncForEach(payload?.removed, async (product: any) => {
+        const findProduct = await transactionClient.product.findUnique({
+          where: {
+            name: product.product,
+          },
+        })
 
-  if (!result) {
-    throw new Error('Invoice update failed')
+        if (findProduct)
+          await transactionClient.product.update({
+            where: {
+              name: product.product,
+            },
+            data: { quantity: +(findProduct.quantity + product.quantity) },
+          })
+      })
+
+      const { removed, ...data } = payload
+      await transactionClient.user.update({
+        where: { id: data.customerId },
+        data: { due: { decrement: +(isExist.due - data.due) } },
+      })
+
+      if (data?.products?.length <= 0) {
+        const result = await prisma.invoice.delete({
+          where: {
+            id,
+          },
+        })
+        return result
+      } else {
+        data.products = JSON.stringify(data.products)
+
+        const result = await transactionClient.invoice.update({
+          where: {
+            id,
+          },
+          data: data,
+        })
+
+        return result
+      }
+    })
+
+    if (!result) {
+      throw new Error('Invoice update failed')
+    }
+
+    return result
+  } else {
+    const result = await prisma.$transaction(async transactionClient => {
+      await transactionClient.user.update({
+        where: { id: isExist.customerId },
+        data: { due: { decrement: isExist.due } },
+      })
+
+      await transactionClient.user.update({
+        where: { id: payload.customerId },
+        data: { due: { increment: payload.due } },
+      })
+
+      await asyncForEach(payload?.removed, async (product: any) => {
+        const findProduct = await transactionClient.product.findUnique({
+          where: {
+            name: product.product,
+          },
+        })
+
+        if (findProduct)
+          await transactionClient.product.update({
+            where: {
+              name: product.product,
+            },
+            data: { quantity: +(findProduct.quantity + product.quantity) },
+          })
+      })
+
+      const { removed, ...data } = payload
+      // await transactionClient.user.update({
+      //   where: { id: data.customerId },
+      //   data: { due: { decrement: +(isExist.due - data.due) } },
+      // })
+
+      if (data?.products?.length <= 0) {
+        const result = await prisma.invoice.delete({
+          where: {
+            id,
+          },
+        })
+        return result
+      } else {
+        data.products = JSON.stringify(data.products)
+
+        const result = await transactionClient.invoice.update({
+          where: {
+            id,
+          },
+          data: data,
+        })
+
+        return result
+      }
+    })
+
+    if (!result) {
+      throw new Error('Invoice update failed')
+    }
+
+    return result
   }
 
-  return result
+  // return null
 }
 
 // delete invoice service

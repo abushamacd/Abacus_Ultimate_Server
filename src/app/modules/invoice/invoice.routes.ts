@@ -5,7 +5,7 @@ import { ENUM_USER_ROLE } from '../../../enums/user'
 import { createInvoiceZod } from './invoice.validations'
 import {
   createInvoice,
-  deleteInvoice,
+  // deleteInvoice,
   getInvoice,
   getInvoices,
   updateInvoice,
@@ -27,6 +27,6 @@ router
   .route('/:id')
   .get(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), getInvoice)
   .patch(auth(ENUM_USER_ROLE.OWNER, ENUM_USER_ROLE.MANAGER), updateInvoice)
-  .delete(auth(ENUM_USER_ROLE.OWNER), deleteInvoice)
+// .delete(auth(ENUM_USER_ROLE.OWNER), deleteInvoice)
 
 export default router

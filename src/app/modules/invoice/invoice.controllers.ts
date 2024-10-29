@@ -53,7 +53,7 @@ export const getInvoice = tryCatch(async (req: Request, res: Response) => {
 // update invoice controller
 export const updateInvoice = tryCatch(async (req: Request, res: Response) => {
   const { id } = req.params
-  const result = await updateInvoiceService(id, req?.body)
+  const result = await updateInvoiceService(id, req.user, req?.body)
   sendRes<Invoice>(res, {
     statusCode: httpStatus.OK,
     success: true,
