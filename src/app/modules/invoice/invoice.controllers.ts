@@ -6,6 +6,7 @@ import { Invoice } from '@prisma/client'
 import {
   createInvoiceService,
   deleteInvoiceService,
+  deleteInvoicesService,
   getInvoiceService,
   getInvoicesService,
   updateInvoiceService,
@@ -66,6 +67,16 @@ export const updateInvoice = tryCatch(async (req: Request, res: Response) => {
 export const deleteInvoice = tryCatch(async (req: Request, res: Response) => {
   const { id } = req.params
   const result = await deleteInvoiceService(id)
+  sendRes<Invoice | null>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Invoice deleted successfully',
+    data: result,
+  })
+})
+// delete invoices
+export const deleteInvoices = tryCatch(async (req: Request, res: Response) => {
+  const result = await deleteInvoicesService(req.body)
   sendRes<Invoice | null>(res, {
     statusCode: httpStatus.OK,
     success: true,

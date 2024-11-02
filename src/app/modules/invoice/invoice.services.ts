@@ -295,33 +295,14 @@ export const deleteInvoiceService = async (
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invoice not found')
   }
 
-  const products: any = isExist.products
-  const data = JSON.parse(products)
+  if (isExist?.due > 0) {
+    throw new Error('First paid the invoice due')
+  }
 
-  const result = await prisma.$transaction(async transactionClient => {
-    await asyncForEach(data, async (product: any) => {
-      const findProduct = await transactionClient.product.findUnique({
-        where: {
-          name: product.product,
-        },
-      })
-
-      if (findProduct)
-        await transactionClient.product.update({
-          where: {
-            name: product.product,
-          },
-          data: { quantity: +findProduct.quantity + product.quantity },
-        })
-    })
-
-    const result = await prisma.invoice.delete({
-      where: {
-        id,
-      },
-    })
-
-    return result
+  const result = await prisma.invoice.delete({
+    where: {
+      id,
+    },
   })
 
   if (!result) {
@@ -329,4 +310,35 @@ export const deleteInvoiceService = async (
   }
 
   return result
+}
+
+// delete invoice service
+export const deleteInvoicesService = async (
+  ids: string[],
+): Promise<Invoice | null> => {
+  const result = await prisma.$transaction(async transactionClient => {
+    await asyncForEach(ids, async (id: any) => {
+      const isExist = await transactionClient.invoice.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!isExist) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Invoice not found')
+      }
+
+      if (isExist?.due <= 0) {
+        const result = await transactionClient.invoice.delete({
+          where: {
+            id,
+          },
+        })
+
+        return result
+      }
+    })
+  })
+
+  return null
 }
