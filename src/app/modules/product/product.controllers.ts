@@ -6,6 +6,7 @@ import { Product } from '@prisma/client'
 import {
   createProductService,
   deleteProductService,
+  deleteProductsService,
   getProductService,
   getProductsService,
   updateProductService,
@@ -70,6 +71,17 @@ export const deleteProduct = tryCatch(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Product deleted successfully',
+    data: result,
+  })
+})
+
+// delete products
+export const deleteProducts = tryCatch(async (req: Request, res: Response) => {
+  const result = await deleteProductsService(req.body)
+  sendRes<Product | null>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Products deleted successfully',
     data: result,
   })
 })

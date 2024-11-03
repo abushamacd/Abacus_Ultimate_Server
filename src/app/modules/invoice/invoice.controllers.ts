@@ -74,13 +74,14 @@ export const deleteInvoice = tryCatch(async (req: Request, res: Response) => {
     data: result,
   })
 })
+
 // delete invoices
 export const deleteInvoices = tryCatch(async (req: Request, res: Response) => {
   const result = await deleteInvoicesService(req.body)
   sendRes<Invoice | null>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Invoice deleted successfully',
+    message: 'Invoices deleted successfully',
     data: result,
   })
 })

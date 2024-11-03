@@ -10,6 +10,7 @@ import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { productPopulate, productSearchableFields } from './product.constants'
 import { JwtPayload } from 'jsonwebtoken'
+import { asyncForEach } from '../../../utilities/asyncForEach'
 // import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create product service
@@ -160,14 +161,6 @@ export const deleteProductService = async (
     where: {
       id,
     },
-    // include: {
-    //   // @ts-ignore
-    //   tasks: {
-    //     orderBy: {
-    //       position: 'asc',
-    //     },
-    //   },
-    // },
   })
 
   if (!isExist) {
@@ -180,27 +173,34 @@ export const deleteProductService = async (
     },
   })
 
-  // await prisma.$transaction(async transactionClient => {
-  //   await asyncForEach(isExist?.sections, async (section: Product) => {
-  //     await transactionClient.task.deleteMany({
-  //       where: {
-  //         sectionId: section?.id,
-  //       },
-  //     })
-  //   })
-
-  //   await transactionClient.section.deleteMany({
-  //     where: {
-  //       productId: id,
-  //     },
-  //   })
-
-  //   await transactionClient.product.delete({
-  //     where: {
-  //       id,
-  //     },
-  //   })
-  // })
-
   return result
+}
+
+// delete products service
+export const deleteProductsService = async (
+  ids: string[],
+): Promise<Product | null> => {
+  await prisma.$transaction(async transactionClient => {
+    await asyncForEach(ids, async (id: any) => {
+      const isExist = await transactionClient.product.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!isExist) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found')
+      }
+
+      const result = await transactionClient.product.delete({
+        where: {
+          id,
+        },
+      })
+
+      return result
+    })
+  })
+
+  return null
 }

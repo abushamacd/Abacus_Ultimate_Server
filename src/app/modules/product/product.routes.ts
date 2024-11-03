@@ -6,6 +6,7 @@ import { createProductZod } from './product.validations'
 import {
   createProduct,
   deleteProduct,
+  deleteProducts,
   getProduct,
   getProducts,
   updateProduct,
@@ -22,6 +23,7 @@ router
     createProduct,
   )
   .get(auth(ENUM_USER_ROLE.OWNER), getProducts)
+  .delete(auth(ENUM_USER_ROLE.OWNER), deleteProducts)
 
 router
   .route('/:id')

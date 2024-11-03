@@ -312,7 +312,7 @@ export const deleteInvoiceService = async (
   return result
 }
 
-// delete invoice service
+// delete invoices service
 export const deleteInvoicesService = async (
   ids: string[],
 ): Promise<Invoice | null> => {
