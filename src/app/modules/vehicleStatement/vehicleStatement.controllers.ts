@@ -6,6 +6,7 @@ import { VehicleStatement } from '@prisma/client'
 import {
   createVehicleStatementService,
   deleteVehicleStatementService,
+  deleteVehicleStatementsService,
   getVehicleStatementService,
   getVehicleStatementsService,
   updateVehicleStatementService,
@@ -79,6 +80,19 @@ export const deleteVehicleStatement = tryCatch(
       statusCode: httpStatus.OK,
       success: true,
       message: 'Vehicle statement deleted successfully',
+      data: result,
+    })
+  },
+)
+
+// delete vehicle statements
+export const deleteVehicleStatements = tryCatch(
+  async (req: Request, res: Response) => {
+    const result = await deleteVehicleStatementsService(req.body)
+    sendRes<VehicleStatement | null>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Vehicle statements deleted successfully',
       data: result,
     })
   },

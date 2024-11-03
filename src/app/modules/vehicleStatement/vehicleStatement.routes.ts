@@ -6,6 +6,7 @@ import { createVehicleStatementZod } from './vehicleStatement.validations'
 import {
   createVehicleStatement,
   deleteVehicleStatement,
+  deleteVehicleStatements,
   getVehicleStatement,
   getVehicleStatements,
   updateVehicleStatement,
@@ -22,6 +23,7 @@ router
     createVehicleStatement,
   )
   .get(auth(ENUM_USER_ROLE.OWNER), getVehicleStatements)
+  .delete(auth(ENUM_USER_ROLE.OWNER), deleteVehicleStatements)
 
 router
   .route('/:id')

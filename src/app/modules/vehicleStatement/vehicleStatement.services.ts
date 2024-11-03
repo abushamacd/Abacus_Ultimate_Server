@@ -11,6 +11,7 @@ import { IPaginationOptions } from '../../../interface/pagination'
 import { IGenericResponse } from '../../../interface/common'
 import { calculatePagination } from '../../../helpers/paginationHelper'
 import { vehicleStatementSearchableFields } from './vehicleStatement.constants'
+import { asyncForEach } from '../../../utilities/asyncForEach'
 // import { asyncForEach } from '../../../utilities/asyncForEach'
 
 // create vehicleStatement service
@@ -253,4 +254,36 @@ export const deleteVehicleStatementService = async (
   }
 
   return result
+}
+
+// delete invoices service
+export const deleteVehicleStatementsService = async (
+  ids: string[],
+): Promise<VehicleStatement | null> => {
+  const result = await prisma.$transaction(async transactionClient => {
+    await asyncForEach(ids, async (id: any) => {
+      const isExist = await transactionClient.vehicleStatement.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!isExist) {
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          'Vehicle statement not found',
+        )
+      }
+
+      const result = await transactionClient.vehicleStatement.delete({
+        where: {
+          id,
+        },
+      })
+
+      return result
+    })
+  })
+
+  return null
 }

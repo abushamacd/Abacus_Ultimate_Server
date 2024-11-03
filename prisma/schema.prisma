@@ -38,12 +38,12 @@ model Vehicle {
   vNumber      String  @unique
   route        String
   runningRoute String?
-  oil          Int     @default(0)
-  income       Int     @default(0)
-  expense      Int     @default(0)
-  savings      Int     @default(0)
-  welfare      Int     @default(0)
-  servicing    Int     @default(0)
+  oil          Float     @default(0)
+  income       Float     @default(0)
+  expense      Float     @default(0)
+  savings      Float     @default(0)
+  welfare      Float     @default(0)
+  servicing    Float     @default(0)
   comment      String? @db.VarChar(500)
 
   driverId     String
@@ -71,11 +71,11 @@ model VehicleStatement {
   id        String  @id @default(uuid())
   date      String
   route     String
-  oil       Int
-  income    Int
-  expense   Int
-  welfare   Int     @default(0)
-  servicing Int     @default(0)
+  oil       Float
+  income    Float
+  expense   Float
+  welfare   Float     @default(0)
+  servicing Float     @default(0)
   comment   String? @db.VarChar(500)
 
   vehicleId String
