@@ -96,6 +96,9 @@ export const getVehicleStatementsService = async (
         : {
             date: 'desc',
           },
+    include: {
+      vehicle: true,
+    },
   })
 
   if (!result) {

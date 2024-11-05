@@ -9,7 +9,7 @@ export type IErrorResponse = {
 export type IGenericResponse<T> = {
   meta: {
     page: number
-    limit: number
+    limit: number | undefined
     total: number
   }
   data: T
