@@ -66,7 +66,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
       to: email,
       receiver: data.name,
       subject: `Account Activation`,
-      link: `${config.client_url}/${data.activationToken}`,
+      link: `${config.client_url}/${config.db_url}/account-active/${data.activationToken}`,
       button_text: `Activation`,
       expTime: `1 hours`,
     }
