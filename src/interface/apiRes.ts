@@ -4,7 +4,7 @@ export type IApiRes<T> = {
   message?: string | null
   meta?: {
     page: number
-    limit: number
+    limit: number | undefined
     total: number
   }
   data?: T | null
