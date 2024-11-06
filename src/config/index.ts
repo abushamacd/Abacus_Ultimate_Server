@@ -8,6 +8,7 @@ export default {
   db_uri: process.env.DATABASE_URL,
   bcrypt_solt_round: process.env.BCRYPT_SOLT_ROUND,
   client_url: process.env.CLIENT_URL,
+  db_url: process.env.DB_URL,
   mail_id: process.env.MAIL_ID,
   mail_pass: process.env.MAIL_PASS,
   cloudinary: {

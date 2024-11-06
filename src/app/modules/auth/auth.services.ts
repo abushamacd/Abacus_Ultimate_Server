@@ -36,7 +36,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
   // save new user
   data.role = 'Consumer'
   data.password = '123456'
-  if (email) data.isActive = false
+  if (email) data.hasAccess = false
 
   const { password } = data
   const hashedPassword = await bcrypt.hash(
@@ -99,7 +99,7 @@ export const accountActivationService = async (token: string) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
   }
 
-  user.isActive = true
+  user.hasAccess = true
   user.activationToken = null
   const result = await prisma.user.update({
     where: {
@@ -241,7 +241,7 @@ export const forgetPasswordService = async (email: string) => {
     to: email,
     receiver: isUserExist?.name,
     subject: `Reset Password`,
-    link: `${config.client_url}/${isUserExist.passwordResetToken}`,
+    link: `${config.client_url}/${config.db_url}/reset-password/${isUserExist.passwordResetToken}`,
     button_text: `Reset Password`,
     expTime: `1 hours`,
   }
