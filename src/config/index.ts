@@ -5,10 +5,10 @@ dotenv.config({ path: path.join(process.cwd(), '.env') })
 export default {
   env: process.env.NODE_ENV,
   port: process.env.PORT,
-  db_uri: process.env.DATABASE_URL,
   bcrypt_solt_round: process.env.BCRYPT_SOLT_ROUND,
   client_url: process.env.CLIENT_URL,
-  db_url: process.env.DB_URL,
+  db_url: process.env.DATABASE_URL,
+  remote_db_url: process.env.REMOTE_DATABASE_URL,
   mail_id: process.env.MAIL_ID,
   mail_pass: process.env.MAIL_PASS,
   cloudinary: {
