@@ -66,7 +66,7 @@ export const signUpService = async (data: User): Promise<User | null> => {
       to: email,
       receiver: data.name,
       subject: `Account Activation`,
-      link: `${config.client_url}/${config.db_url}/account-active/${data.activationToken}`,
+      link: `${config.client_url}/${config.db_path}/account-active/${data.activationToken}`,
       button_text: `Activation`,
       expTime: `1 hours`,
     }
@@ -241,7 +241,7 @@ export const forgetPasswordService = async (email: string) => {
     to: email,
     receiver: isUserExist?.name,
     subject: `Reset Password`,
-    link: `${config.client_url}/${config.db_url}/reset-password/${isUserExist.passwordResetToken}`,
+    link: `${config.client_url}/${config.db_path}/reset-password/${isUserExist.passwordResetToken}`,
     button_text: `Reset Password`,
     expTime: `1 hours`,
   }

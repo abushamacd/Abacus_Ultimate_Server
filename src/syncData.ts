@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // syncData.ts
 
 import { PrismaClient } from '@prisma/client'

@@ -9,6 +9,7 @@ export default {
   client_url: process.env.CLIENT_URL,
   db_url: process.env.DATABASE_URL,
   remote_db_url: process.env.REMOTE_DATABASE_URL,
+  db_path: process.env.DB_PATH,
   mail_id: process.env.MAIL_ID,
   mail_pass: process.env.MAIL_PASS,
   cloudinary: {
